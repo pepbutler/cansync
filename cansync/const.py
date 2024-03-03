@@ -1,0 +1,73 @@
+import os
+
+from typing import Final, Any
+from cansync.types import ConfigDict
+
+ANNOYING_MSG: Final[str] = "Incorrectly typed value!"
+URL_REGEX: Final[str] = (
+    r"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)"
+)
+API_KEY_REGEX: Final[str] = r"\d{4}~[A-Za-z0-9]{64}"
+
+HOME: Final[str] = os.getenv(
+    "HOME", os.getenv("HOMEDRIVE", os.getenv("HOMESHARE", "wtf"))
+)
+XDG_CACHE_DIR: Final[str] = os.getenv("XDG_CACHE_HOME", os.path.join(HOME, ".cache"))
+XDG_CONFIG_DIR: Final[str] = os.getenv("XDG_CONFIG_HOME", os.path.join(HOME, ".config"))
+
+CONFIG_DIR: Final[str] = os.path.join(XDG_CONFIG_DIR, "cansync")
+CONFIG_FN: Final[str] = os.path.join(CONFIG_DIR, "config.toml")
+DEFAULT_CONFIG: Final[ConfigDict] = {
+    "url": "",
+    "api_key": "",
+    "course_ids": [],
+}
+CONFIG_KEY_DEFINITIONS: Final[dict[str, str]] = {
+    "url": "Canvas URL",
+    "api_key": "API key",
+    "course_ids": "course ID number(s)",
+}
+
+CACHE_DIR: Final[str] = os.path.join(XDG_CACHE_DIR, "cansync")
+DOCUMENTS_DIR: Final[str] = os.path.join(HOME, "Documents")
+DOWNLOAD_DIR: Final[str] = os.path.join(DOCUMENTS_DIR, "Cansync")
+
+TUI_STRINGS: Final[dict[str, list[str]]] = {
+    "select": ["Change Canvas URL", "Change API key", "Select courses"],
+    "url": ["Enter a Canvas URL", "Canvas URL: "],
+    "api": ["Enter an API key", "Key: "],
+}
+
+TUI_STYLE: Final[dict[str, str | int]] = {
+    "box": "DOUBLE",
+    "width": 50,
+}
+
+LOGGING_CONFIG: Final[dict[str, Any]] = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {"format": "%(levelname)s: %(message)s"},
+        "detailed": {
+            "format": "[%(levelname)s|%(module)s|L%(lineno)d] %(asctime)s: %(message)s",
+            "datefmt": "%Y-%m-%dT%H:%M:%S%z",
+        },
+    },
+    "handlers": {
+        "stderr": {
+            "class": "logging.StreamHandler",
+            "level": "WARNING",
+            "formatter": "simple",
+            "stream": "ext://sys.stderr",
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "formatter": "detailed",
+            "filename": f"{CACHE_DIR}/cansync.log",
+            "maxBytes": 10 * 1024**2,
+            "backupCount": 3,
+        },
+    },
+    "loggers": {"root": {"level": "DEBUG", "handlers": ["stderr", "file"]}},
+}
