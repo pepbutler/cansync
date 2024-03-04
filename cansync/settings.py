@@ -238,7 +238,7 @@ class CoursesWindow(Window):
     def on_submit(self, _: Button) -> None:
         utils.overwrite_config_value(
             "course_ids",
-            [self.course_id[b.label] for b in self.enabled],
+            [self.course_id[b.label] for b in self.enabled],  # type: ignore[attr-defined]
         )
         self.exit()
 

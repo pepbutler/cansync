@@ -4,7 +4,7 @@ import os
 
 import cansync.utils as utils
 
-from cansync.const import CONFIG_DIR, DOWNLOAD_DIR
+from cansync.const import CONFIG_DIR, DOWNLOAD_DIR, CACHE_DIR
 from cansync.errors import InvalidConfigurationError
 from cansync.api import Canvas
 
@@ -74,6 +74,7 @@ def settings(args, canvas: Canvas | None) -> None:
 
 def main() -> None:
     utils.create_dir(CONFIG_DIR)
+    utils.create_dir(CACHE_DIR)
     utils.create_dir(DOWNLOAD_DIR)
 
     utils.create_config()

@@ -14,7 +14,6 @@ from pytermgui import (
     InputField,
     Splitter,
     Label,
-    CenteringPolicy,
 )
 
 import os
@@ -40,7 +39,6 @@ class SyncWindow(Window):
         self.context = context
         self.canvas = canvas
         self.title = "Sync"
-        self.centered_axis = CenteringPolicy.ALL
         self.sync_button = Button("Sync all", onclick=self.sync)
         self.exit_button = Button("  Exit  ", onclick=self.exit)
         super().__init__(self.sync_button, self.exit_button, **TUI_STYLE)
@@ -57,10 +55,8 @@ class SyncWindow(Window):
         super().__init__("[bold accent]D o n e", self.exit_button)
 
     def sync(self, button: Button) -> None:
-        config = utils.get_config()
 
-        for course_id in config["course_ids"]:
-            course = self.canvas.get_course(course_id)
+        for course in self.canvas.get_courses():
 
             for module in course.get_modules():
 
