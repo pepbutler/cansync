@@ -1,4 +1,5 @@
 import os
+import re
 
 from typing import Final, Any
 from cansync.types import ConfigDict
@@ -10,7 +11,7 @@ URL_REGEX: Final[str] = (
 API_KEY_REGEX: Final[str] = r"\d{4}~[A-Za-z0-9]{64}"
 
 HOME: Final[str] = os.getenv(
-    "HOME", os.getenv("HOMEDRIVE", os.getenv("HOMESHARE", "wtf"))
+    "HOME", os.getenv("HOMEDRIVE", os.getenv("HOMESHARE", "this is an issue"))
 )
 XDG_CACHE_DIR: Final[str] = os.getenv("XDG_CACHE_HOME", os.path.join(HOME, ".cache"))
 XDG_CONFIG_DIR: Final[str] = os.getenv("XDG_CONFIG_HOME", os.path.join(HOME, ".config"))
@@ -26,6 +27,11 @@ CONFIG_KEY_DEFINITIONS: Final[dict[str, str]] = {
     "url": "Canvas URL",
     "api_key": "API key",
     "course_ids": "course ID number(s)",
+}
+CONFIG_VALIDATORS: Final[dict[str, callable]] = {
+    "url": lambda s: re.match(URL_REGEX, s),
+    "api_key": lambda s: re.match(API_KEY_REGEX, s),
+    "course_ids": lambda l: all(isinstance(i, int) for i in l) or l == [],
 }
 
 CACHE_DIR: Final[str] = os.path.join(XDG_CACHE_DIR, "cansync")

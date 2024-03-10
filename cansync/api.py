@@ -10,6 +10,8 @@ from typing import Callable, Optional, Generator, Any
 import re
 import logging
 import canvasapi
+from canvasapi.exceptions import InvalidAccessToken
+from requests.exceptions import MissingSchema
 
 
 logger = logging.getLogger(__name__)
@@ -22,12 +24,35 @@ class Canvas:
     """
 
     def __init__(self):
+        self._canvas = None
+
+        # self.connect()
+        #
+
+    def load_config(self) -> None:
         config = utils.get_config()
         self.url = config["url"]
+        self.api_key = config["api_key"]
         self.course_ids = config["course_ids"]
 
+    def connect(self) -> bool:
         logger.info("Starting canvasapi.Canvas instance")
-        self._canvas = canvasapi.Canvas(config["url"], config["api_key"])
+        try:
+            self.load_config()
+            self._canvas = canvasapi.Canvas(self.url, self.api_key)
+            self._canvas.get_current_user()  # test request
+            return True
+        except (
+            InvalidAccessToken,
+            MissingSchema,
+        ) as e:  # i expect more errors cropping up
+            self._canvas = None
+            logger.warn(e)
+            return False
+
+    @property
+    def connected(self) -> bool:
+        return self._canvas is not None
 
     def get_file(self, id: int) -> File:
         return self._canvas.get_file(id)
@@ -47,12 +72,11 @@ class Canvas:
 
 class Scanner(ABC):
     """
-    Define an interface to aid in standardizing what data is available so we cna lazy
-    load data effeciently at the users will
+    Define an interface to aid in standardizing what data is available
     """
 
     canvas: Canvas
-    course: CourseScan | None
+    course: CourseScan
 
     @staticmethod
     @abstractmethod
@@ -73,25 +97,23 @@ class CourseScan(Scanner):
     Courses on canvas that provide modules
     """
 
-    _course: course
-    course: CourseScan | None
+    course: Course
     canvas: Canvas
 
     @staticmethod
     def load(course: Course, canvas: Canvas) -> CourseScan:
         return CourseScan(
             course,
-            None,
             canvas,
         )
 
     @property
     def name(self) -> str:
-        return utils.better_course_name(self._course.name)
+        return utils.better_course_name(self.course.name)
 
     @property
     def id(self) -> int:
-        return self._course.id
+        return self.course.id
 
     @property
     def file_regex(self) -> str:
@@ -99,10 +121,10 @@ class CourseScan(Scanner):
 
     @property
     def code(self) -> str:
-        return self._course.code
+        return self.course.code
 
     def get_modules(self) -> Generator[ModuleScan, None, None]:
-        for module in self._course.get_modules():
+        for module in self.course.get_modules():
             yield ModuleScan.load(module, self.canvas, self)
 
 
@@ -115,7 +137,7 @@ class ModuleScan(Scanner):
     """
 
     module: Module
-    course: CourseScan | None
+    course: CourseScan
     canvas: Canvas
 
     @staticmethod
@@ -173,7 +195,9 @@ class PageScan(Scanner):
     @property
     def empty(self) -> bool:
         if not hasattr(self.page, "body"):
-            logger.debug(f"Page with id {self.id} has no body")
+            logger.debug(
+                f"Page with id {self.id} has no body"
+            )  # its pretty weird ennit
             return True
         else:
             return self.page.body is None

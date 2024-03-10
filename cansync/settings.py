@@ -1,6 +1,6 @@
 from cansync.const import TUI_STRINGS, DEFAULT_CONFIG, ANNOYING_MSG, TUI_STYLE
 from cansync.api import Canvas
-from cansync.types import CourseInfo
+from cansync.types import CourseInfo, ConfigKeys
 from cansync.errors import InvalidConfigurationError
 import cansync.utils as utils
 
@@ -15,8 +15,12 @@ from pytermgui import (
 
 import re
 import time
+import logging
 
-from typing import Callable, Any, Generator, Optional, Literal
+from typing import Callable, Any, Generator, Optional
+
+
+logger = logging.getLogger(__name__)
 
 
 class AnnoyingExitWindow(Window):
@@ -24,21 +28,14 @@ class AnnoyingExitWindow(Window):
     Show pesky little error window when user submits invalid config information
     """
 
-    def __init__(self, context: WindowManager, body: str):
+    def __init__(self, context: WindowManager, *body: list[str]):
         self.context = context
-        self.ok_button = Button("Exit", onclick=self.exit)
+        self.body = body
         self.return_button = Button("Return", onclick=self.back)
-        self.options = Splitter(self.ok_button, self.return_button)
-        super().__init__(body, "", self.options, **TUI_STYLE)
 
-        self.set_title("⚠ Warning ⚠")
+        super().__init__(*self.body, "", self.return_button)
+        self.set_title("Warning ⚠")
         self.center()
-        self.move(10, 10)
-
-    def exit(self, _: Button) -> None:
-        self.context.remove(self)
-        self.context.stop()
-        exit(1)
 
     def back(self, _: Button) -> None:
         self.context.remove(self)
@@ -62,13 +59,8 @@ class SelectWindow(Window):
     ):
         self.context = context
 
-        if exclude_course_select:
-            strings = TUI_STRINGS["select"][:-1]
-        else:
-            strings = TUI_STRINGS["select"]
-
-        max_length = max(len(s) for s in strings)
-        opts = [o.ljust(max_length) for o in strings]
+        max_length = max(len(s) for s in TUI_STRINGS["select"])
+        opts = [o.ljust(max_length) for o in TUI_STRINGS["select"]]
         buttons_container = Container(
             *[Button(o, onclick=on_click, centered=True) for o in opts]
         )
@@ -83,12 +75,8 @@ class SelectWindow(Window):
         self.center()
 
     def exit(self, _: Button) -> None:
-        try:
-            config = utils.get_config()
-            self.context.stop()
-            exit(0)
-        except InvalidConfigurationError as e:
-            self.context.add(AnnoyingExitWindow(self.context, ANNOYING_MSG))
+        self.context.stop()
+        exit(0)
 
 
 class ConfigEditWindow(Window):
@@ -141,16 +129,17 @@ class ConfigEditWindow(Window):
 
         return callback_with_input
 
-    def _overwrite_value(
-        self, text: str, key: Literal["url", "api_key", "course_ids"]
-    ) -> None:
-        if key not in DEFAULT_CONFIG.keys():
-            raise ValueError(f"Non-existent config key {key}")
-
-        config = utils.get_config(invalid_ok=True)
-        config[key] = text
-        utils.overwrite_config_value(key, text, invalid_ok=True, partial_ok=True)
-        self.exit()
+    def _overwrite_value(self, text: str, key: ConfigKeys) -> None:
+        utils.overwrite_config_value(key, text)
+        if not utils.valid_key(key, text):
+            logger.info(f"Invalid replacements for config, {key}: {text}")
+            self.context.add(
+                AnnoyingExitWindow(
+                    self.context, "Invalid value entered! Check for typos plzz thx cya"
+                )
+            )
+        else:
+            self.exit()
 
     def exit(self):
         self.context.remove(self)
@@ -165,6 +154,9 @@ class URLTypeWindow(ConfigEditWindow):
         super().__init__(context, *TUI_STRINGS["url"], self.on_submit, width=60)
 
     def on_submit(self, text: str):
+        # this might come back to bite ass later
+        if not text.startswith("http"):
+            text = "https://" + text
         self._overwrite_value(text.strip("/"), "url")
 
 
@@ -180,6 +172,26 @@ class APIKeyTypeWindow(ConfigEditWindow):
         self._overwrite_value(text, "api_key")
 
 
+class CoursesClosedWindow(Window):
+    """
+    Basically a big error box
+    """
+
+    def __init__(self, context: WindowManager, canvas: Canvas):
+        self.context = context
+        self.canvas = canvas
+
+        if not canvas.connected:
+            retry = canvas.connect()
+
+            if not retry:
+                super().__init__(
+                    "",
+                    # Button("Close", onclick=self.context.remove(self)),
+                    **TUI_STYLE,
+                )
+
+
 class CoursesWindow(Window):
     """
     Show a list of courses as checkboxes and append select courses' ids to the config
@@ -188,9 +200,21 @@ class CoursesWindow(Window):
 
     def __init__(self, context: WindowManager, canvas: Canvas):
         self.context = context
-        self.course_id: dict[CourseInfo] = {}
         self.canvas = canvas
 
+        if not canvas.connected:
+            retry = canvas.connect()
+
+            if not retry:
+                super().__init__(
+                    "[bold accent]Canvas failed to connect",
+                    "Either the provided url or api key need to be corrected in order to connect.",
+                    "",
+                    # Button("Close", onclick=self.context.remove(self)),
+                    **TUI_STYLE,
+                )
+
+        self.course_id: dict[CourseInfo] = {}
         self.enabled = Container()
         self.disabled = Container()
         self.submit = Container(Button("Submit", onclick=self.on_submit, centered=True))
@@ -251,20 +275,14 @@ class SettingsApplication:
     TUI application to manage settings easily
     """
 
-    def __init__(self, canvas: Canvas | None = None):
+    def __init__(self, canvas: Canvas):
         self._manager = WindowManager()
         self._main_window = SelectWindow(
             self._manager,
             self.on_select_button_click,
             exclude_course_select=bool(canvas is None),
         )
-        self._url_window = URLTypeWindow(self._manager)
-        self._api_key_window = APIKeyTypeWindow(self._manager)
-
-        if canvas is not None:
-            self._courses_window = CoursesWindow(self._manager, canvas)
-        else:
-            self._courses_window = Window()
+        self.canvas = canvas
 
     def on_select_button_click(self, button: Button) -> None:
         """
@@ -275,11 +293,21 @@ class SettingsApplication:
         url, api, course = TUI_STRINGS["select"]
 
         if label == url:
-            self.run(self._url_window)
+            self.run(URLTypeWindow(self._manager))
         if label == api:
-            self.run(self._api_key_window)
+            self.run(APIKeyTypeWindow(self._manager))
         if label == course:
-            self.run(self._courses_window)
+            first_attempt = self.canvas.connect()
+            if not first_attempt:
+                self.run(
+                    AnnoyingExitWindow(
+                        self._manager,
+                        "[bold accent]Canvas failed to connect",
+                        "Either the provided url or api key need to be corrected in order to connect.",
+                    )
+                )
+            else:
+                self.run(CoursesWindow(self._manager, self.canvas))
 
     def stop(self) -> None:
         self._manager.stop()
