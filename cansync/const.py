@@ -35,6 +35,7 @@ CONFIG_VALIDATORS: Final[dict[str, callable]] = {
 }
 
 CACHE_DIR: Final[str] = os.path.join(XDG_CACHE_DIR, "cansync")
+LOGFILE: Final[str] = f"{CACHE_DIR}/cansync.log"
 DOCUMENTS_DIR: Final[str] = os.path.join(HOME, "Documents")
 DOWNLOAD_DIR: Final[str] = os.path.join(DOCUMENTS_DIR, "Cansync")
 
@@ -70,7 +71,7 @@ LOGGING_CONFIG: Final[dict[str, Any]] = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "detailed",
-            "filename": f"{CACHE_DIR}/cansync.log",
+            "filename": LOGFILE,
             "maxBytes": 10 * 1024**2,
             "backupCount": 3,
         },

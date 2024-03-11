@@ -4,7 +4,7 @@ import os
 
 import cansync.utils as utils
 
-from cansync.const import CONFIG_DIR, DOWNLOAD_DIR, CACHE_DIR
+from cansync.const import CONFIG_DIR, DOWNLOAD_DIR, CACHE_DIR, LOGFILE
 from cansync.errors import InvalidConfigurationError
 from cansync.api import Canvas
 
@@ -58,17 +58,17 @@ def parse_args() -> Namespace | None:
         return args
 
 
-def sync(args, canvas: Canvas) -> None:
-    from cansync.sync import SyncApplication
+def sync(args: Namespace) -> None:
+    from cansync.tui import SyncApplication
 
-    app = SyncApplication(canvas)
+    app = SyncApplication()
     app.start()
 
 
-def settings(args, canvas: Canvas | None) -> None:
-    from cansync.settings import SettingsApplication
+def settings(args: Namespace) -> None:
+    from cansync.tui import SettingsApplication
 
-    app = SettingsApplication(canvas)
+    app = SettingsApplication()
     app.start()
 
 
@@ -86,16 +86,8 @@ def main() -> None:
 
     if args.logs:
         utils.setup_logging()
-    try:
-        canvas = Canvas()
-    except (InvalidConfigurationError, InvalidAccessToken) as e:
-        if isinstance(e, InvalidConfigurationError):
-            logger.debug(e)
-        else:
-            logger.warn(e)
-        canvas = None
-
-    args.func(args, canvas)
+        print(f"Log file is located at {LOGFILE}")
+    args.func(args)
 
 
 if __name__ == "__main__":

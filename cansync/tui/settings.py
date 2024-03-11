@@ -23,7 +23,7 @@ from typing import Callable, Any, Generator, Optional
 logger = logging.getLogger(__name__)
 
 
-class AnnoyingExitWindow(Window):
+class ErrorWindow(Window):
     """
     Show pesky little error window when user submits invalid config information
     """
@@ -55,7 +55,6 @@ class SelectWindow(Window):
         self,
         context: WindowManager,
         on_click: Callable,
-        exclude_course_select: bool = False,
     ):
         self.context = context
 
@@ -134,7 +133,7 @@ class ConfigEditWindow(Window):
         if not utils.valid_key(key, text):
             logger.info(f"Invalid replacements for config, {key}: {text}")
             self.context.add(
-                AnnoyingExitWindow(
+                ErrorWindow(
                     self.context, "Invalid value entered! Check for typos plzz thx cya"
                 )
             )
@@ -242,14 +241,13 @@ class SettingsApplication:
     TUI application to manage settings easily
     """
 
-    def __init__(self, canvas: Canvas):
+    def __init__(self):
+        self.canvas = Canvas()
         self._manager = WindowManager()
         self._main_window = SelectWindow(
             self._manager,
             self.on_select_button_click,
-            exclude_course_select=bool(canvas is None),
         )
-        self.canvas = canvas
 
     def on_select_button_click(self, button: Button) -> None:
         """
@@ -267,7 +265,7 @@ class SettingsApplication:
             first_attempt = self.canvas.connect()
             if not first_attempt:
                 self.run(
-                    AnnoyingExitWindow(
+                    ErrorWindow(
                         self._manager,
                         "[bold accent]Canvas failed to connect",
                         "Either the provided url or api key need to be corrected in order to connect.",

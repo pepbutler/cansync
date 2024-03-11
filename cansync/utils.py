@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 def setup_logging() -> None:
     """
-    Setup logging using logging config defined in config.py
+    Setup logging using logging config defined in const.py
     """
     logging.config.dictConfig(LOGGING_CONFIG)
 
@@ -78,7 +78,7 @@ def create_config() -> None:
 
 def complete(config: ConfigDict) -> bool:
     """
-    Validates config to check all fields are present (not necessarily valid)
+    Check if all fields are present in the config, if not then it's probably broken
 
     :returns: If the config given is complete
     """
@@ -87,7 +87,7 @@ def complete(config: ConfigDict) -> bool:
 
 def valid(config: ConfigDict) -> bool:
     """
-    Validates config to check all fields are valid and present
+    Validates config to check all fields are correct and present
 
     :returns: If the config is deemed valid
     """
@@ -97,7 +97,7 @@ def valid(config: ConfigDict) -> bool:
 
 def valid_key(key: ConfigKeys, value: str | list[int]) -> bool:
     """
-    Validates config key and value against valid conditions
+    Validates config key and value against test conditions
 
     :returns: If the particular key and value is deemed valid
     """
@@ -124,7 +124,9 @@ def set_config(config: ConfigDict) -> None:
     Write to local config file
     """
     if not complete(config):
-        raise InvalidConfigurationError()
+        raise InvalidConfigurationError(
+            f"Some config keys are missing"
+        )  # this is NOT helpful
     with open(CONFIG_FN, "w") as fp:
         logger.debug("Writing config")
         toml.dump(config, fp)
@@ -135,7 +137,7 @@ def overwrite_config_value(key: ConfigKeys, value: str | list[int]) -> None:
     Overwrite a specific value in the config file
     """
     if key not in DEFAULT_CONFIG.keys():
-        raise ValueError(f"Overwrite with non-existent key '{key}'")
+        raise InvalidConfigurationError(f"Overwrite with non-existent key '{key}'")
 
     config = get_config()
     config[key] = value

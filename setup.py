@@ -11,7 +11,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     long_description=LONG_DESC,
     license="MIT",
-    packages=["cansync"],
+    packages=["cansync", "cansync.tui"],
     entry_points={"console_scripts": ["cansync=cansync.main:main"]},
     python_requires=">=3.10.0",
     install_requires=[

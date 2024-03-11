@@ -26,19 +26,20 @@ class Canvas:
     def __init__(self):
         self._canvas = None
 
-        # self.connect()
-        #
-
-    def load_config(self) -> None:
         config = utils.get_config()
         self.url = config["url"]
         self.api_key = config["api_key"]
         self.course_ids = config["course_ids"]
 
+    def reload_config(self) -> None:
+        config = utils.get_config()
+        self.url = config["url"]
+        self.api_key = config["api_key"]
+
     def connect(self) -> bool:
         logger.info("Starting canvasapi.Canvas instance")
         try:
-            self.load_config()
+            self.reload_config()
             self._canvas = canvasapi.Canvas(self.url, self.api_key)
             self._canvas.get_current_user()  # test request
             return True
@@ -62,7 +63,7 @@ class Canvas:
             yield self.get_course(id)
 
     def get_course(self, id: int) -> CourseScan:
-        return CourseScan.load(self._canvas.get_course(id), self)
+        return CourseScan(self._canvas.get_course(id), self)
 
     def get_courses_info(self) -> Generator[CourseInfo, None, None]:
         courses = self._canvas.get_courses()
@@ -77,10 +78,6 @@ class Scanner(ABC):
 
     canvas: Canvas
     course: CourseScan
-
-    @staticmethod
-    @abstractmethod
-    def load(item: Any, *args, **kwargs) -> Scanner: ...
 
     @property
     @abstractmethod
@@ -100,13 +97,6 @@ class CourseScan(Scanner):
     course: Course
     canvas: Canvas
 
-    @staticmethod
-    def load(course: Course, canvas: Canvas) -> CourseScan:
-        return CourseScan(
-            course,
-            canvas,
-        )
-
     @property
     def name(self) -> str:
         return utils.better_course_name(self.course.name)
@@ -125,7 +115,10 @@ class CourseScan(Scanner):
 
     def get_modules(self) -> Generator[ModuleScan, None, None]:
         for module in self.course.get_modules():
-            yield ModuleScan.load(module, self.canvas, self)
+            yield ModuleScan(module, self, self.canvas)
+
+    def get_page(self, url: str) -> Page:
+        return self.course.get_page(url)
 
 
 # TODO: add quizez
@@ -140,10 +133,6 @@ class ModuleScan(Scanner):
     course: CourseScan
     canvas: Canvas
 
-    @staticmethod
-    def load(module: Module, canvas: Canvas, course: CourseScan) -> ModuleScan:
-        return ModuleScan(module, course, canvas)
-
     @property
     def name(self) -> str:
         return self.module.name
@@ -155,10 +144,10 @@ class ModuleScan(Scanner):
     def get_pages(self) -> Generator[PageScan, None, None]:
         for item in self.module.get_module_items():
             if hasattr(item, "page_url"):
-                yield PageScan.load(
-                    self.course._course.get_page(item.page_url),
-                    self.canvas,
+                yield PageScan(
+                    self.course.get_page(item.page_url),
                     self.course,
+                    self.canvas,
                 )
 
     def get_attachments(self) -> Generator[File, None, None]:
@@ -177,12 +166,8 @@ class PageScan(Scanner):
     """
 
     page: Page
-    course: Course
+    course: CourseScan
     canvas: Canvas
-
-    @staticmethod
-    def load(page: Page, canvas: Canvas, course: CourseScan) -> PageScan:
-        return PageScan(page, course, canvas)
 
     @property
     def name(self) -> str:

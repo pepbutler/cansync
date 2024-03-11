@@ -93,9 +93,21 @@ class SyncWindow(Window):
 
 
 class SyncApplication:
-    def __init__(self, canvas: Canvas):
+    def __init__(self):
         self._manager = WindowManager()
-        self.main_window = SyncWindow(self._manager, canvas)
+        self.canvas = Canvas()
+
+        if self.canvas.connect():
+            self.main_window = SyncWindow(self._manager, self.canvas)
+        else:
+            from cansync.tui import ErrorWindow
+
+            self.main_window = ErrorWindow(
+                "You need to configure the settings before downloading stuff, try:",
+                "",
+                Container(f"cansync settings".center(64)),
+            )
+            exit(1)
 
     def run(self, window: Window):
         with self._manager as manager:
