@@ -172,26 +172,6 @@ class APIKeyTypeWindow(ConfigEditWindow):
         self._overwrite_value(text, "api_key")
 
 
-class CoursesClosedWindow(Window):
-    """
-    Basically a big error box
-    """
-
-    def __init__(self, context: WindowManager, canvas: Canvas):
-        self.context = context
-        self.canvas = canvas
-
-        if not canvas.connected:
-            retry = canvas.connect()
-
-            if not retry:
-                super().__init__(
-                    "",
-                    # Button("Close", onclick=self.context.remove(self)),
-                    **TUI_STYLE,
-                )
-
-
 class CoursesWindow(Window):
     """
     Show a list of courses as checkboxes and append select courses' ids to the config
@@ -201,19 +181,6 @@ class CoursesWindow(Window):
     def __init__(self, context: WindowManager, canvas: Canvas):
         self.context = context
         self.canvas = canvas
-
-        if not canvas.connected:
-            retry = canvas.connect()
-
-            if not retry:
-                super().__init__(
-                    "[bold accent]Canvas failed to connect",
-                    "Either the provided url or api key need to be corrected in order to connect.",
-                    "",
-                    # Button("Close", onclick=self.context.remove(self)),
-                    **TUI_STYLE,
-                )
-
         self.course_id: dict[CourseInfo] = {}
         self.enabled = Container()
         self.disabled = Container()
