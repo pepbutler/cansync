@@ -64,7 +64,6 @@ class SelectWindow(Window):
         super().__init__(
             buttons_container,
             exit_container,
-            **self.settings,
         )
         self.set_title("Settings")
         self.center()

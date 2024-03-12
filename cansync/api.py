@@ -48,7 +48,7 @@ class Canvas:
             MissingSchema,
         ) as e:  # i expect more errors cropping up
             self._canvas = None
-            logger.warn(e)
+            logger.warning(e)
             return False
 
     @property
@@ -107,7 +107,7 @@ class CourseScan(Scanner):
 
     @property
     def file_regex(self) -> str:
-        fre = r"{}/courses/{}/files/([0-9]+)".format(self.canvas.url, self.id)
+        fre = r"{}(/api/v1/)?courses/{}/files/([0-9]+)".format(self.canvas.url, self.id)
         logging.info(f"File regex: {fre}")
         return fre
 
@@ -195,6 +195,6 @@ class PageScan(Scanner):
 
         found_file_ids = re.findall(self.course.file_regex, self.page.body)
 
-        for id in found_file_ids:
+        for _, id in found_file_ids:
             if id is not None:
                 yield self.canvas.get_file(id)
