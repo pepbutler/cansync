@@ -47,10 +47,6 @@ class SelectWindow(Window):
     User can select an operation to perform which modifies some settings
     """
 
-    settings = {
-        "width": 29,
-    }
-
     def __init__(
         self,
         context: WindowManager,

@@ -41,7 +41,7 @@ def short_name(name: str, max_length: int) -> str:
 
     :returns: Shorter course title
     """
-    if len(name) < max_length:
+    if len(name) <= max_length:
         return name.ljust(max_length)
     else:
         return name[: max_length - 2] + ".."
@@ -91,8 +91,7 @@ def valid(config: ConfigDict) -> bool:
 
     :returns: If the config is deemed valid
     """
-    assert complete(config), "Fields are missing from the config file"
-    return all(CONFIG_VALIDATORS[k](v) for k, v in config.items())
+    return all(CONFIG_VALIDATORS[k](v) for k, v in config.items()) and complete(config)
 
 
 def valid_key(key: ConfigKeys, value: str | list[int]) -> bool:
