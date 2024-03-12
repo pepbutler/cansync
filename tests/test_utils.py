@@ -18,14 +18,14 @@ VALID_CONFIG: Final[ConfigDict] = {
 INVALID_CONFIG: Final[ConfigDict] = {
     "url": "bruh",
     "api_key": "jfdkah8b298j2ifjkdhs92kfldh",
-    "course_ids": ["j"],
+    "course_ids": ["a"],
 }
 
 PARTIAL_VALID_CONFIG: Final[ConfigDict] = copy(VALID_CONFIG)
 PARTIAL_VALID_CONFIG.pop("api_key")
 
 PARTIAL_INVALID_CONFIG: Final[ConfigDict] = copy(INVALID_CONFIG)
-# PARTIAL_INVALID_CONFIG.pop("api_key")
+PARTIAL_INVALID_CONFIG.pop("url")
 
 
 def test_short_name():

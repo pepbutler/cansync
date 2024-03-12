@@ -107,7 +107,7 @@ class CourseScan(Scanner):
 
     @property
     def file_regex(self) -> str:
-        fre = r"{}(/api/v1/)?courses/{}/files/([0-9]+)".format(self.canvas.url, self.id)
+        fre = r"{}/(api/v1/)?courses/{}/files/([0-9]+)".format(self.canvas.url, self.id)
         logging.info(f"File regex: {fre}")
         return fre
 
