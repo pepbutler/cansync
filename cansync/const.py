@@ -1,7 +1,7 @@
 import os
 import re
 
-from typing import Final, Any
+from typing import Final, Any, Callable
 from cansync.types import ConfigDict
 
 ANNOYING_MSG: Final[str] = "Incorrectly typed value!"
@@ -28,7 +28,7 @@ CONFIG_KEY_DEFINITIONS: Final[dict[str, str]] = {
     "api_key": "API key",
     "course_ids": "course ID number(s)",
 }
-CONFIG_VALIDATORS: Final[dict[str, callable]] = {
+CONFIG_VALIDATORS: Final[dict[str, Callable]] = {
     "url": lambda s: re.match(URL_REGEX, s),
     "api_key": lambda s: re.match(API_KEY_REGEX, s),
     "course_ids": lambda l: all(isinstance(i, int) for i in l) or l == [],
