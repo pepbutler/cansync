@@ -16,6 +16,7 @@ setuptools.setup(
     python_requires=">=3.10.0",
     install_requires=[
         "requests>=2.31.0",
+        "requests-mock>=1.11.0",
         "toml>=0.10.2",
         "canvasapi>=3.2.0",
         "PyTermGUI>=7.7.0",

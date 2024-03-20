@@ -20,7 +20,10 @@ logger = logging.getLogger(__name__)
 class Canvas:
     """
     Library version of canvasapi.Canvas that exposes only used methods and information
-    and avoids putting canvasapi stuff everywhere while utilizing the config
+    and avoids putting canvasapi stuff everywhere while utilizing the config.
+
+    Canvas objects do *not* connect by default because the thing might not be configured
+    correctly yet.
     """
 
     def __init__(self):
@@ -157,6 +160,8 @@ class ModuleScan(Scanner):
             if hasattr(item, "url"):
                 if re.match(self.course.file_regex, item.url):
                     yield self.canvas.get_file(int(item.url.split("/")[-1]))
+                else:
+                    logger.info(f"Ignoring ModuleItem url {item.url}")
 
 
 # TODO: add images, files, text
@@ -181,6 +186,7 @@ class PageScan(Scanner):
 
     @property
     def empty(self) -> bool:
+        # Prevent attribute errors
         if not hasattr(self.page, "body"):
             logger.debug(
                 f"Page with id {self.id} has no body"
@@ -194,7 +200,7 @@ class PageScan(Scanner):
             return
 
         found_file_ids = re.findall(self.course.file_regex, self.page.body)
-
+        logger.info(f"Found files in this page with ids: {found_file_ids}")
         for _, id in found_file_ids:
             if id is not None:
                 yield self.canvas.get_file(id)

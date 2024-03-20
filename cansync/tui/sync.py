@@ -18,7 +18,6 @@ from pytermgui import (
 
 import os
 import logging
-import threading
 import functools
 
 from abc import ABC, abstractmethod
@@ -43,7 +42,7 @@ class SyncWindow(Window):
         self.exit_button = Button("  Exit  ", onclick=self.exit)
         super().__init__(self.sync_button, self.exit_button, **TUI_STYLE)
 
-    def show_action(self, course: CourseScan, module: ModuleScan, action: str) -> None:
+    def action(self, course: CourseScan, module: ModuleScan, action: str) -> None:
         super().__init__(
             Container(CONTAINER_STR.format(course.name, module.name, action)),
             self.sync_button,
@@ -51,8 +50,8 @@ class SyncWindow(Window):
             **TUI_STYLE,
         )
 
-    def show_done(self) -> None:
-        super().__init__("[bold accent]D o n e", self.exit_button)
+    def finish(self) -> None:
+        super().__init__("[bold accent]Done :bangbang:", self.exit_button)
 
     def sync(self, button: Button) -> None:
 
@@ -61,17 +60,17 @@ class SyncWindow(Window):
             for module in course.get_modules():
 
                 for attachment in module.get_attachments():
-                    self.show_action(course, module, "Downloading attachments...")
+                    self.action(course, module, "Downloading attachments...")
                     self.download(attachment, None, course, module)
 
                 for page in module.get_pages():
-                    self.show_action(course, module, f"Reading page...")
+                    self.action(course, module, f"Reading page...")
 
                     for file in page.get_files():
-                        self.show_action(course, module, "Downloading file...")
+                        self.action(course, module, "Downloading file...")
                         self.download(file, page, course, module)
 
-        self.show_done()
+        self.finish()
 
     def download(
         self,
@@ -86,7 +85,7 @@ class SyncWindow(Window):
             new = utils.download_structured(file, course.name, module.name)
 
         if not new:
-            self.show_action(course, module, "Skipping file...")
+            self.action(course, module, "Skipping file...")
 
     def exit(self, _: Button) -> None:
         self.context.stop()
@@ -107,7 +106,6 @@ class SyncApplication:
                 "",
                 Container(f"cansync settings".center(64)),
             )
-            exit(1)
 
     def run(self, window: Window):
         with self._manager as manager:
