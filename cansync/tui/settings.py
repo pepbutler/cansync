@@ -41,7 +41,6 @@ class ErrorWindow(Window):
         self.context.remove(self)
 
 
-# TODO: Clean this shit up
 class SelectWindow(Window):
     """
     User can select an operation to perform which modifies some settings
@@ -54,10 +53,11 @@ class SelectWindow(Window):
     ):
         self.context = context
 
-        max_length = max(len(s) for s in TUI_STRINGS["select"])
-        opts = [o.ljust(max_length) for o in TUI_STRINGS["select"]]
         buttons_container = Container(
-            *[Button(o, onclick=on_click, centered=True) for o in opts]
+            *(
+                Button(opt, onclick=on_click, centered=True)
+                for opt in TUI_STRINGS["select_opts"]
+            )
         )
         exit_container = Container(Button("Done", onclick=self.exit, centered=True))
 
@@ -124,26 +124,18 @@ class ConfigEditWindow(Window):
         return callback_with_input
 
     def _overwrite_value(self, text: str, key: ConfigKeys) -> None:
-        utils.overwrite_config_value(key, text)
         if not utils.valid_key(key, text):
             logger.info(f"Invalid replacements for config, {key}: {text}")
-            self.context.add(
-                ErrorWindow(
-                    self.context, "Invalid value entered! Check for typos plzz thx cya"
-                )
-            )
+            self.context.add(ErrorWindow(self.context, "Invalid value entered."))
         else:
+            utils.overwrite_config_value(key, text)
             self.exit()
 
     def exit(self):
         self.context.remove(self)
 
 
-class URLTypeWindow(ConfigEditWindow):
-    """
-    Window for configuring the Canvas URL
-    """
-
+class URLInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
         super().__init__(context, *TUI_STRINGS["url"], self.on_submit, width=60)
 
@@ -154,11 +146,7 @@ class URLTypeWindow(ConfigEditWindow):
         self._overwrite_value(text.strip("/"), "url")
 
 
-class APIKeyTypeWindow(ConfigEditWindow):
-    """
-    Window for configuring the API key
-    """
-
+class APIKeyInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
         super().__init__(context, *TUI_STRINGS["api"], self.on_submit, width=79)
 
@@ -250,12 +238,12 @@ class SettingsApplication:
         """
 
         label = button.label.rstrip()
-        url, api, course = TUI_STRINGS["select"]
+        url, api, course = TUI_STRINGS["select_opts"]
 
         if label == url:
-            self.run(URLTypeWindow(self._manager))
+            self.run(URLInputWindow(self._manager))
         if label == api:
-            self.run(APIKeyTypeWindow(self._manager))
+            self.run(APIKeyInputWindow(self._manager))
         if label == course:
             first_attempt = self.canvas.connect()
             if not first_attempt:

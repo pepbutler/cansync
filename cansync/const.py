@@ -4,6 +4,30 @@ import re
 from typing import Final, Any, Callable
 from cansync.types import ConfigDict
 
+
+# XXX: This is dumb
+def _short_name(name: str, max_length: int) -> str:
+    """
+    Convert a long name to a short version for pretty UI
+
+    :returns: Shorter course title
+    """
+    if len(name) <= max_length:
+        return name.ljust(max_length)
+    else:
+        return name[: max_length - 2] + ".."
+
+
+def _same_length(*strings: str) -> list[str]:
+    """
+    Use the short_name function on each string and limit length to the longest
+    string given as an argument
+
+    :returns: Length-adjusted strings
+    """
+    return [_short_name(s, len(max(strings))) for s in strings]
+
+
 ANNOYING_MSG: Final[str] = "Incorrectly typed value!"
 URL_REGEX: Final[str] = (
     r"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)"
@@ -40,9 +64,11 @@ DOCUMENTS_DIR: Final[str] = os.path.join(HOME, "Documents")
 DOWNLOAD_DIR: Final[str] = os.path.join(DOCUMENTS_DIR, "Cansync")
 
 TUI_STRINGS: Final[dict[str, list[str]]] = {
-    "select": ["Change Canvas URL", "Change API key", "Select courses"],
-    "url": ["Enter a Canvas URL", "Canvas URL: "],
-    "api": ["Enter an API key", "Key: "],
+    "select_opts": _same_length(
+        "Change Canvas URL", "Change API key", "Select courses"
+    ),
+    "url": _same_length("Enter a Canvas URL", "Canvas URL: "),
+    "api": _same_length("Enter an API key", "Key: "),
 }
 
 TUI_STYLE: Final[dict[str, str | int]] = {

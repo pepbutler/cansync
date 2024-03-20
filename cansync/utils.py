@@ -160,7 +160,7 @@ def download_structured(file: File, *dirs: str, force=False, tui=False) -> bool:
             return True
         except ResourceDoesNotExist as e:
             logger.warning(
-                f"Tried to download {file.filename} but we likely don't have access"
+                f"Tried to download {file.filename} but we likely don't have access ({e})"
             )
             return False
     else:
