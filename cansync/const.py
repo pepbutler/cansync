@@ -7,11 +7,6 @@ from cansync.types import ConfigDict
 
 # XXX: This is dumb
 def _short_name(name: str, max_length: int) -> str:
-    """
-    Convert a long name to a short version for pretty UI
-
-    :returns: Shorter course title
-    """
     if len(name) <= max_length:
         return name.ljust(max_length)
     else:
@@ -19,13 +14,7 @@ def _short_name(name: str, max_length: int) -> str:
 
 
 def _same_length(*strings: str) -> list[str]:
-    """
-    Use the short_name function on each string and limit length to the longest
-    string given as an argument
-
-    :returns: Length-adjusted strings
-    """
-    return [_short_name(s, len(max(strings))) for s in strings]
+    return [_short_name(s, len(max(strings, key=len))) for s in strings]
 
 
 ANNOYING_MSG: Final[str] = "Incorrectly typed value!"

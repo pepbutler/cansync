@@ -24,6 +24,7 @@ def parse_args() -> Namespace | None:
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="Enable verbose output (more)"
     )
+    parser.set_defaults(func=sync)
 
     sync_parser = subparsers.add_parser(
         "sync", help="Download all the files into a structured directory"
@@ -53,7 +54,7 @@ def parse_args() -> Namespace | None:
     args = parser.parse_args()
     if not "func" in vars(args).keys():
         parser.print_usage()
-        return None
+        exit(1)
     else:
         return args
 
