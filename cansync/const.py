@@ -20,13 +20,14 @@ def _same_length(*strings: str) -> list[str]:
 
 class ModuleItemType(StrEnum):
     # INFO: https://canvas.instructure.com/doc/api/modules.html#ModuleItem
-    ATTACHMENT = "File"
-    PAGE = "Page"
-    ASSIGNMENT = "Assignment"
-    QUIZ = "Quiz"
     HEADER = "SubHeader"
-    EXTERNAL = "ExternalTool"
+    PAGE = "Page"
+    QUIZ = "Quiz"
+    EXTERNAL_TOOL = "ExternalTool"
+    EXTERNAL_URL = "ExternalUrl"
+    ATTACHMENT = "File"
     DISCUSSION = "Discussion"
+    ASSIGNMENT = "Assignment"
 
 
 ANNOYING_MSG: Final[str] = "Incorrectly typed value!"
@@ -70,6 +71,11 @@ TUI_STRINGS: Final[dict[str, list[str]]] = {
     ),
     "url": ("Enter a Canvas URL", "Canvas URL: "),
     "api": ("Enter an API key", "Key: "),
+    "sync": """
+Course: {}
+Module: {}
+[bold accent]{}
+""",
 }
 
 TUI_STYLE: Final[dict[str, str | int]] = {

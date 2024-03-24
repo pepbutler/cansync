@@ -237,7 +237,7 @@ class SettingsApplication:
         Select menu chooses which window to open
         """
 
-        label = button.label.rstrip()
+        label = button.label
         url, api, course = TUI_STRINGS["select_opts"]
 
         if label == url:

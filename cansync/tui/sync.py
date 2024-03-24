@@ -24,13 +24,7 @@ from abc import ABC, abstractmethod
 from typing import Iterable, Any, Final
 
 
-CONTAINER_STR: Final[
-    str
-] = """
-Course: {}
-Module: {}
-[bold accent]{}
-"""
+logger = logging.getLogger(__name__)
 
 
 class SyncWindow(Window):
@@ -44,7 +38,7 @@ class SyncWindow(Window):
 
     def action(self, course: CourseScan, module: ModuleScan, action: str) -> None:
         super().__init__(
-            Container(CONTAINER_STR.format(course.name, module.name, action)),
+            Container(TUI_STRINGS["sync"].format(course.name, module.name, action)),
             self.sync_button,
             self.exit_button,
             **TUI_STYLE,
@@ -79,6 +73,7 @@ class SyncWindow(Window):
         course: CourseScan,
         module: ModuleScan,
     ) -> None:
+        logger.info(f"Downloading {file.filename}")
         if page is not None:
             new = utils.download_structured(file, course.name, module.name, page.name)
         else:
