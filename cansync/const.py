@@ -1,5 +1,6 @@
 import os
 import re
+from enum import StrEnum
 
 from typing import Final, Any, Callable
 from cansync.types import ConfigDict
@@ -15,6 +16,17 @@ def _short_name(name: str, max_length: int) -> str:
 
 def _same_length(*strings: str) -> list[str]:
     return [_short_name(s, len(max(strings, key=len))) for s in strings]
+
+
+class ModuleItemType(StrEnum):
+    # INFO: https://canvas.instructure.com/doc/api/modules.html#ModuleItem
+    ATTACHMENT = "File"
+    PAGE = "Page"
+    ASSIGNMENT = "Assignment"
+    QUIZ = "Quiz"
+    HEADER = "SubHeader"
+    EXTERNAL = "ExternalTool"
+    DISCUSSION = "Discussion"
 
 
 ANNOYING_MSG: Final[str] = "Incorrectly typed value!"
@@ -56,8 +68,8 @@ TUI_STRINGS: Final[dict[str, list[str]]] = {
     "select_opts": _same_length(
         "Change Canvas URL", "Change API key", "Select courses"
     ),
-    "url": _same_length("Enter a Canvas URL", "Canvas URL: "),
-    "api": _same_length("Enter an API key", "Key: "),
+    "url": ("Enter a Canvas URL", "Canvas URL: "),
+    "api": ("Enter an API key", "Key: "),
 }
 
 TUI_STYLE: Final[dict[str, str | int]] = {
