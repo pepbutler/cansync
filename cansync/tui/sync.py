@@ -97,6 +97,7 @@ class SyncApplication:
             from cansync.tui import ErrorWindow
 
             self.main_window = ErrorWindow(
+                self._manager,
                 "You need to configure the settings before downloading stuff, try:",
                 "",
                 Container(f"cansync settings".center(64)),
