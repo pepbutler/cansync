@@ -6,17 +6,6 @@ import re
 
 from urllib.parse import urlparse
 
-from cansync.const import (
-    DOWNLOAD_DIR,
-    CONFIG_DIR,
-    CONFIG_FN,
-    DEFAULT_CONFIG,
-    CONFIG_KEY_DEFINITIONS,
-    CONFIG_VALIDATORS,
-    URL_REGEX,
-    API_KEY_REGEX,
-    LOGGING_CONFIG,
-)
 from cansync.errors import InvalidConfigurationError
 from cansync.types import ConfigDict, ConfigKeys, File
 
@@ -32,6 +21,8 @@ def setup_logging() -> None:
     """
     Setup logging using logging config defined in const.py
     """
+    from cansync.const import LOGGING_CONFIG
+
     logging.config.dictConfig(LOGGING_CONFIG)
 
 
@@ -70,6 +61,8 @@ def create_config() -> None:
     """
     Create config file when there is none present
     """
+    from cansync.const import CONFIG_DIR, CONFIG_FN, DEFAULT_CONFIG
+
     if not os.path.exists(CONFIG_FN):
         logger.debug(f"Creating new config file at {CONFIG_FN}")
         os.makedirs(CONFIG_DIR, exist_ok=True)
@@ -82,16 +75,9 @@ def complete(config: ConfigDict) -> bool:
 
     :returns: If the config given is complete
     """
+    from cansync.const import CONFIG_KEY_DEFINITIONS
+
     return CONFIG_KEY_DEFINITIONS.keys() == config.keys()
-
-
-def valid(config: ConfigDict) -> bool:
-    """
-    Validates config to check all fields are correct and present
-
-    :returns: If the config is deemed valid
-    """
-    return all(CONFIG_VALIDATORS[k](v) for k, v in config.items()) and complete(config)
 
 
 def valid_key(key: ConfigKeys, value: str | list[int]) -> bool:
@@ -100,9 +86,20 @@ def valid_key(key: ConfigKeys, value: str | list[int]) -> bool:
 
     :returns: If the particular key and value is deemed valid
     """
+    from cansync.const import CONFIG_KEY_DEFINITIONS, CONFIG_VALIDATORS
+
     if key not in CONFIG_KEY_DEFINITIONS.keys():
         raise KeyError(f"Key '{key}' not in config definition")
     return CONFIG_VALIDATORS[key](value)
+
+
+def valid(config: ConfigDict) -> bool:
+    """
+    Validates config to check all fields are correct and present
+
+    :returns: If the config is deemed valid
+    """
+    return all(valid_key(k, v) for k, v in config.items()) and complete(config)
 
 
 def get_config() -> ConfigDict:
@@ -149,6 +146,8 @@ def download_structured(file: File, *dirs: str, force=False, tui=False) -> bool:
 
     :returns: If the file was downloaded
     """
+    from cansync.const import DOWNLOAD_DIR
+
     path = os.path.join(DOWNLOAD_DIR, *dirs)
     fpath = os.path.join(path, file.filename)
     create_dir(path)

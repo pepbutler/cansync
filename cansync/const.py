@@ -6,16 +6,10 @@ from typing import Final, Any, Callable
 from cansync.types import ConfigDict
 
 
-# XXX: This is dumb
-def _short_name(name: str, max_length: int) -> str:
-    if len(name) <= max_length:
-        return name.ljust(max_length)
-    else:
-        return name[: max_length - 2] + ".."
-
-
 def _same_length(*strings: str) -> list[str]:
-    return [_short_name(s, len(max(strings, key=len))) for s in strings]
+    from cansync.utils import short_name
+
+    return [short_name(s, len(max(strings, key=len))) for s in strings]
 
 
 class ModuleItemType(StrEnum):
