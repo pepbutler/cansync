@@ -1,5 +1,6 @@
 import os
 import re
+from pathlib import Path
 from enum import StrEnum
 
 from typing import Final, Any, Callable
@@ -30,14 +31,16 @@ URL_REGEX: Final[str] = (
 )
 API_KEY_REGEX: Final[str] = r"\d{4}~[A-Za-z0-9]{64}"
 
-HOME: Final[str] = os.getenv(
-    "HOME", os.getenv("HOMEDRIVE", os.getenv("HOMESHARE", "this is an issue"))
+HOME: Final[Path] = Path(
+    os.getenv(
+        "HOME", os.getenv("HOMEDRIVE", os.getenv("HOMESHARE", "this is an issue"))
+    )
 )
-XDG_CACHE_DIR: Final[str] = os.getenv("XDG_CACHE_HOME", os.path.join(HOME, ".cache"))
-XDG_CONFIG_DIR: Final[str] = os.getenv("XDG_CONFIG_HOME", os.path.join(HOME, ".config"))
+XDG_CACHE_DIR: Final[Path] = Path(os.getenv("XDG_CACHE_HOME", HOME / ".cache"))
+XDG_CONFIG_DIR: Final[Path] = Path(os.getenv("XDG_CONFIG_HOME", HOME / ".config"))
 
-CONFIG_DIR: Final[str] = os.path.join(XDG_CONFIG_DIR, "cansync")
-CONFIG_FN: Final[str] = os.path.join(CONFIG_DIR, "config.toml")
+CONFIG_DIR: Final[Path] = XDG_CONFIG_DIR / "cansync"
+CONFIG_FN: Final[Path] = CONFIG_DIR / "config.toml"
 DEFAULT_CONFIG: Final[ConfigDict] = {
     "url": "",
     "api_key": "",
@@ -54,10 +57,10 @@ CONFIG_VALIDATORS: Final[dict[str, Callable]] = {
     "course_ids": lambda l: all(isinstance(i, int) for i in l) or l == [],
 }
 
-CACHE_DIR: Final[str] = os.path.join(XDG_CACHE_DIR, "cansync")
-LOGFILE: Final[str] = f"{CACHE_DIR}/cansync.log"
-DOCUMENTS_DIR: Final[str] = os.path.join(HOME, "Documents")
-DOWNLOAD_DIR: Final[str] = os.path.join(DOCUMENTS_DIR, "Cansync")
+CACHE_DIR: Final[Path] = XDG_CACHE_DIR / "cansync"
+LOGFILE: Final[Path] = CACHE_DIR / "cansync.log"
+DOCUMENTS_DIR: Final[Path] = HOME / "Documents"
+DOWNLOAD_DIR: Final[Path] = DOCUMENTS_DIR / "Cansync"
 
 TUI_STRINGS: Final[dict[str, list[str]]] = {
     "select_opts": _same_length(

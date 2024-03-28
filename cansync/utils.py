@@ -3,8 +3,7 @@ import logging.config
 import toml
 import os
 import re
-
-from urllib.parse import urlparse
+from functools import reduce
 
 from cansync.errors import InvalidConfigurationError
 from cansync.types import ConfigDict, ConfigKeys, File
@@ -61,7 +60,7 @@ def create_config() -> None:
     """
     from cansync.const import CONFIG_DIR, CONFIG_FN, DEFAULT_CONFIG
 
-    if not os.path.exists(CONFIG_FN):
+    if not CONFIG_FN.exists():
         logger.debug(f"Creating new config file at {CONFIG_FN}")
         os.makedirs(CONFIG_DIR, exist_ok=True)
         set_config(DEFAULT_CONFIG)
@@ -106,6 +105,8 @@ def get_config() -> ConfigDict:
 
     :returns: Config as a key-value dictionary
     """
+    from cansync.const import CONFIG_FN
+
     with open(CONFIG_FN, "r") as fp:
         logger.debug("Retrieving config from file")
         config = ConfigDict(**toml.load(fp))
@@ -117,6 +118,8 @@ def set_config(config: ConfigDict) -> None:
     """
     Write to local config file
     """
+    from cansync.const import CONFIG_FN
+
     if not complete(config):
         raise InvalidConfigurationError(
             f"Some config keys are missing"
@@ -130,6 +133,8 @@ def overwrite_config_value(key: ConfigKeys, value: str | list[int]) -> None:
     """
     Overwrite a specific value in the config file
     """
+    from cansync.const import DEFAULT_CONFIG
+
     if key not in DEFAULT_CONFIG.keys():
         raise InvalidConfigurationError(f"Overwrite with non-existent key '{key}'")
 
@@ -146,14 +151,14 @@ def download_structured(file: File, *dirs: str, force=False, tui=False) -> bool:
     """
     from cansync.const import DOWNLOAD_DIR
 
-    path = os.path.join(DOWNLOAD_DIR, *dirs)
-    fpath = os.path.join(path, file.filename)
+    path = reduce(lambda p, q: p / q, [DOWNLOAD_DIR, *dirs])
+    file_path = path / file.filename
     create_dir(path)
 
-    if not os.path.exists(fpath) or force:
+    if not file_path.exists() or force:
         logger.info(f"Downloading {file.filename}" + "" if not force else " (forced)")
         try:
-            file.download(fpath)
+            file.download(file_path)
             return True
         except ResourceDoesNotExist as e:
             logger.warning(
