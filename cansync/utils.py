@@ -14,8 +14,6 @@ from canvasapi.exceptions import ResourceDoesNotExist
 
 logger = logging.getLogger(__name__)
 
-# TODO: remove the curse
-
 
 def setup_logging() -> None:
     """

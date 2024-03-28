@@ -2,6 +2,7 @@ from canvasapi.course import Course as Course
 from canvasapi.module import Module as Module, ModuleItem as ModuleItem
 from canvasapi.file import File as File
 from canvasapi.page import Page as Page
+from canvasapi.quiz import Quiz as Quiz
 
 # idk this is like giving a monkey a machine gun
 # from pydantic import BaseModel, ValidationError

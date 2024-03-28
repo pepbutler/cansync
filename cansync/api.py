@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import cansync.utils as utils
-from cansync.types import File, Module, ModuleItem, Course, Page, CourseInfo
+from cansync.types import File, Module, ModuleItem, Course, Page, CourseInfo, Quiz
 from cansync.const import ModuleItemType
 
 from abc import ABC, abstractmethod
@@ -151,8 +151,7 @@ class ModuleScan(Scanner):
     def items(self) -> list[ModuleItem]:
         return [item for item in self.module.get_module_items()]
 
-    def items_by_type(self, type: ModuleItemType) -> Generator[Moduleitem]:
-        # INFO: No I don't care that it shadows the builtin function
+    def items_by_type(self, type: ModuleItemType) -> Generator[ModuleItem, None, None]:
         yield from filter(lambda item: ModuleItemType(item.type) is type, self.items)
 
     def get_pages(self) -> Generator[PageScan, None, None]:
@@ -172,7 +171,6 @@ class ModuleScan(Scanner):
             yield self.canvas.get_quiz(item.content_id)
 
 
-# TODO: add images, text
 @dataclass
 class PageScan(Scanner):
     """
