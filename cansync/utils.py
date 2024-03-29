@@ -4,6 +4,7 @@ import toml
 import os
 import re
 from functools import reduce
+from pathlib import Path
 
 from cansync.errors import InvalidConfigurationError
 from cansync.types import ConfigDict, ConfigKeys, File
@@ -58,12 +59,12 @@ def create_config() -> None:
     """
     Create config file when there is none present
     """
-    from cansync.const import CONFIG_DIR, CONFIG_FN, DEFAULT_CONFIG
+    from cansync.const import CONFIG_DIR, CONFIG_FN, CONFIG_DEFAULTS
 
     if not CONFIG_FN.exists():
         logger.debug(f"Creating new config file at {CONFIG_FN}")
         os.makedirs(CONFIG_DIR, exist_ok=True)
-        set_config(DEFAULT_CONFIG)
+        set_config(CONFIG_DEFAULTS)
 
 
 def complete(config: ConfigDict) -> bool:
@@ -133,9 +134,9 @@ def overwrite_config_value(key: ConfigKeys, value: str | list[int]) -> None:
     """
     Overwrite a specific value in the config file
     """
-    from cansync.const import DEFAULT_CONFIG
+    from cansync.const import CONFIG_DEFAULTS
 
-    if key not in DEFAULT_CONFIG.keys():
+    if key not in CONFIG_DEFAULTS.keys():
         raise InvalidConfigurationError(f"Overwrite with non-existent key '{key}'")
 
     config = get_config()
@@ -149,9 +150,8 @@ def download_structured(file: File, *dirs: str, force=False, tui=False) -> bool:
 
     :returns: If the file was downloaded
     """
-    from cansync.const import DOWNLOAD_DIR
-
-    path = reduce(lambda p, q: p / q, [DOWNLOAD_DIR, *dirs])
+    download_dir = Path(get_config()["storage_path"])
+    path = reduce(lambda p, q: p / q, [download_dir, *dirs])
     file_path = path / file.filename
     create_dir(path)
 

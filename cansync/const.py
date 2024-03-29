@@ -1,5 +1,6 @@
 import os
 import re
+import logging
 from pathlib import Path
 from enum import StrEnum
 
@@ -7,10 +8,30 @@ from typing import Final, Any, Callable
 from cansync.types import ConfigDict
 
 
+logger = logging.getLogger(__name__)
+
+
 def _same_length(*strings: str) -> list[str]:
     from cansync.utils import short_name
 
     return [short_name(s, len(max(strings, key=len))) for s in strings]
+
+
+def verify_accessible_path(p: Path) -> bool:
+    if p.exists():
+        if p.owner() == os.getlogin():
+            return True
+        else:
+            return False
+
+    try:
+        p.mkdir()
+    except PermissionError as e:
+        logger.warn(e)
+        return False
+    except Exception as e:
+        logger.warn(f"Unknown path resolution error: '{e}'")
+        return False
 
 
 class ModuleItemType(StrEnum):
@@ -25,7 +46,6 @@ class ModuleItemType(StrEnum):
     ASSIGNMENT = "Assignment"
 
 
-ANNOYING_MSG: Final[str] = "Incorrectly typed value!"
 URL_REGEX: Final[str] = (
     r"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)"
 )
@@ -39,32 +59,37 @@ HOME: Final[Path] = Path(
 XDG_CACHE_DIR: Final[Path] = Path(os.getenv("XDG_CACHE_HOME", HOME / ".cache"))
 XDG_CONFIG_DIR: Final[Path] = Path(os.getenv("XDG_CONFIG_HOME", HOME / ".config"))
 
+CACHE_DIR: Final[Path] = XDG_CACHE_DIR / "cansync"
+LOG_FN: Final[Path] = CACHE_DIR / "cansync.log"
+
 CONFIG_DIR: Final[Path] = XDG_CONFIG_DIR / "cansync"
 CONFIG_FN: Final[Path] = CONFIG_DIR / "config.toml"
-DEFAULT_CONFIG: Final[ConfigDict] = {
+
+DEFAULT_DOWNLOAD_DIR: Final[Path] = HOME / "Documents" / "Cansync"
+
+CONFIG_DEFAULTS: Final[ConfigDict] = {
     "url": "",
     "api_key": "",
+    "storage_path": str(DEFAULT_DOWNLOAD_DIR),
     "course_ids": [],
 }
 CONFIG_KEY_DEFINITIONS: Final[dict[str, str]] = {
     "url": "Canvas URL",
     "api_key": "API key",
-    "course_ids": "course ID number(s)",
+    "storage_path": "Storage path",
+    "course_ids": "Course ID number(s)",
 }
 CONFIG_VALIDATORS: Final[dict[str, Callable]] = {
     "url": lambda s: re.match(URL_REGEX, s),
     "api_key": lambda s: re.match(API_KEY_REGEX, s),
+    "storage_path": lambda s: verify_accessible_path(Path(s)),
     "course_ids": lambda l: all(isinstance(i, int) for i in l) or l == [],
 }
 
-CACHE_DIR: Final[Path] = XDG_CACHE_DIR / "cansync"
-LOGFILE: Final[Path] = CACHE_DIR / "cansync.log"
-DOCUMENTS_DIR: Final[Path] = HOME / "Documents"
-DOWNLOAD_DIR: Final[Path] = DOCUMENTS_DIR / "Cansync"
 
 TUI_STRINGS: Final[dict[str, list[str]]] = {
     "select_opts": _same_length(
-        "Change Canvas URL", "Change API key", "Select courses"
+        "Change Canvas URL", "Change API key", "Change storage path", "Select courses"
     ),
     "url": ("Enter a Canvas URL", "Canvas URL: "),
     "api": ("Enter an API key", "Key: "),
@@ -73,6 +98,7 @@ Course: {}
 Module: {}
 [bold accent]{}
 """,
+    "storage_path": ("Enter a storage path", "Path('~' ok!): "),
 }
 
 TUI_STYLE: Final[dict[str, str | int]] = {
@@ -101,7 +127,7 @@ LOGGING_CONFIG: Final[dict[str, Any]] = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "detailed",
-            "filename": LOGFILE,
+            "filename": LOG_FN,
             "maxBytes": 10 * 1024**2,
             "backupCount": 3,
         },

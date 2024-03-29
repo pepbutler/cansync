@@ -1,4 +1,4 @@
-from cansync.const import TUI_STRINGS, DEFAULT_CONFIG, ANNOYING_MSG, TUI_STYLE
+from cansync.const import TUI_STRINGS, CONFIG_DEFAULTS, TUI_STYLE
 from cansync.api import Canvas
 from cansync.types import CourseInfo, ConfigKeys
 from cansync.errors import InvalidConfigurationError
@@ -154,6 +154,16 @@ class APIKeyInputWindow(ConfigEditWindow):
         self._overwrite_value(text, "api_key")
 
 
+class StorageInputWindow(ConfigEditWindow):
+    def __init__(self, context: WindowManager):
+        super().__init__(
+            context, *TUI_STRINGS["storage_path"], self.on_submit, width=60
+        )
+
+    def on_submit(self, text: str):
+        self._overwrite_value(text, "storage_path")
+
+
 class CoursesWindow(Window):
     """
     Show a list of courses as checkboxes and append select courses' ids to the config
@@ -238,15 +248,17 @@ class SettingsApplication:
         """
 
         label = button.label
-        url, api, course = TUI_STRINGS["select_opts"]
+        url, api, storage, course = TUI_STRINGS["select_opts"]
 
         if label == url:
             self.run(URLInputWindow(self._manager))
         if label == api:
             self.run(APIKeyInputWindow(self._manager))
+        if label == storage:
+            self.run(StorageInputWindow(self._manager))
         if label == course:
-            first_attempt = self.canvas.connect()
-            if not first_attempt:
+            attempt = self.canvas.connect()
+            if not attempt:
                 self.run(
                     ErrorWindow(
                         self._manager,

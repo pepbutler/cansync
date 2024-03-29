@@ -1,6 +1,6 @@
 from __future__ import annotations
 from cansync.api import Canvas, CourseScan, ModuleScan, PageScan, Scanner
-from cansync.const import DOWNLOAD_DIR, TUI_STYLE, TUI_STRINGS
+from cansync.const import TUI_STYLE, TUI_STRINGS
 from cansync.types import File, Course, Module, ModuleItem, Page
 import cansync.utils as utils
 

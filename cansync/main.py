@@ -4,7 +4,7 @@ import os
 
 import cansync.utils as utils
 
-from cansync.const import CONFIG_DIR, DOWNLOAD_DIR, CACHE_DIR, LOGFILE
+from cansync.const import CONFIG_DIR, CACHE_DIR, LOG_FN
 from cansync.errors import InvalidConfigurationError
 from cansync.api import Canvas
 
@@ -14,7 +14,7 @@ from canvasapi.exceptions import ResourceDoesNotExist, InvalidAccessToken
 logger = logging.getLogger(__name__)
 
 
-def parse_args() -> Namespace | None:
+def parse_args() -> Namespace:
     parser = ArgumentParser()
     subparsers = parser.add_subparsers(help="List of subcommands")
 
@@ -51,12 +51,7 @@ def parse_args() -> Namespace | None:
     help_parser = subparsers.add_parser("help", help="Display the help menu")
     help_parser.set_defaults(func=parser.print_help)
 
-    args = parser.parse_args()
-    if not "func" in vars(args).keys():
-        parser.print_usage()
-        exit(1)
-    else:
-        return args
+    return parser.parse_args()
 
 
 def sync(args: Namespace) -> None:
@@ -76,18 +71,14 @@ def settings(args: Namespace) -> None:
 def main() -> None:
     utils.create_dir(CONFIG_DIR)
     utils.create_dir(CACHE_DIR)
-    utils.create_dir(DOWNLOAD_DIR)
 
     utils.create_config()
 
     args = parse_args()
 
-    if args is None:
-        exit(1)
-
     if args.logs:
         utils.setup_logging()
-        print(f"Log file is located at {LOGFILE}")
+
     args.func(args)
 
 
