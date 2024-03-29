@@ -31,27 +31,18 @@ class Canvas:
 
     def __init__(self):
         self._canvas = None
-
-        config = utils.get_config()
-        self.url = config["url"]
-        self.api_key = config["api_key"]
-        self.course_ids = config["course_ids"]
-
-    def reload_config(self) -> None:
-        config = utils.get_config()
-        self.url = config["url"]
-        self.api_key = config["api_key"]
+        self.local_config = utils.get_config()
 
     def connect(self) -> bool:
         logger.info("Starting canvasapi.Canvas instance")
         try:
-            self.reload_config()
-            self._canvas = canvasapi.Canvas(self.url, self.api_key)
-            self._canvas.get_current_user()  # test request
+            config = utils.get_config()
+            self._canvas = canvasapi.Canvas(config["url"], config["api_key"])
+            self._canvas.get_current_user()  # INFO: Test request
             return True
         except (InvalidAccessToken, MissingSchema, ResourceDoesNotExist) as e:
-            self._canvas = None
             logger.warning(e)
+            self._canvas = None
             return False
 
     @property
@@ -62,7 +53,7 @@ class Canvas:
         return self._canvas.get_file(id)
 
     def get_courses(self) -> Generator[CourseScan, None, None]:
-        for id in self.course_ids:
+        for id in self.local_config["course_ids"]:
             yield self.get_course(id)
 
     def get_course(self, id: int) -> CourseScan:
@@ -118,7 +109,7 @@ class CourseScan(Scanner):
 
     @property
     def resource_regex(self) -> str:
-        return rf"{self.canvas.url}/(api/v1/)?courses/{self.id}/{{}}/([0-9]+)"
+        return rf"{self.canvas.local_config['url']}/(api/v1/)?courses/{self.id}/{{}}/([0-9]+)"
 
     def get_modules(self) -> Generator[ModuleScan, None, None]:
         for module in self.course.get_modules():
