@@ -4,7 +4,7 @@ Sync all important documents from Canvas, with ease.
 # Requirements
 - python
 - pip
-- pipx
+- pipx (recommended)
 
 ## Installation
 ### Using pipx
@@ -13,8 +13,17 @@ git clone https://github.com/pepbutler/cansync
 cd cansync
 pipx install .
 ```
+### Using pip
+```sh
+git clone https://github.com/pepbutler/cansync
+cd cansync
+pip install .
+```
+
 ## Uninstall
-pipx uninstall cansync
+```
+pip(x) uninstall cansync
+```
 
 # Generating an API Token
 1. Navigate to top left of the canvas homepage
