@@ -28,7 +28,7 @@ class ErrorWindow(Window):
     Show pesky little error window when user submits invalid config information
     """
 
-    def __init__(self, context: WindowManager, *body: list[str]):
+    def __init__(self, context: WindowManager, *body: str):
         self.context = context
         self.body = body
         self.return_button = Button("Return", onclick=self.back)

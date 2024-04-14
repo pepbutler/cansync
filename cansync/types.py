@@ -4,13 +4,22 @@ from canvasapi.file import File as File
 from canvasapi.page import Page as Page
 from canvasapi.quiz import Quiz as Quiz
 
-# idk this is like giving a monkey a machine gun
-# from pydantic import BaseModel, ValidationError
-# from pydantic.functional_validators import AfterValidator
-
 from typing import TypedDict, NamedTuple, Literal
+from enum import StrEnum
 
 ConfigKeys = Literal["url", "api_key", "course_ids", "storage_path"]
+
+
+class ModuleItemType(StrEnum):
+    # INFO: https://canvas.instructure.com/doc/api/modules.html#ModuleItem
+    HEADER = "SubHeader"
+    PAGE = "Page"
+    QUIZ = "Quiz"
+    EXTERNAL_TOOL = "ExternalTool"
+    EXTERNAL_URL = "ExternalUrl"
+    ATTACHMENT = "File"
+    DISCUSSION = "Discussion"
+    ASSIGNMENT = "Assignment"
 
 
 class ConfigDict(TypedDict):

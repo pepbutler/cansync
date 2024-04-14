@@ -1,8 +1,16 @@
 from __future__ import annotations
 
 import cansync.utils as utils
-from cansync.types import File, Module, ModuleItem, Course, Page, CourseInfo, Quiz
-from cansync.const import ModuleItemType
+from cansync.types import (
+    File,
+    Module,
+    ModuleItem,
+    Course,
+    Page,
+    CourseInfo,
+    Quiz,
+    ModuleItemType,
+)
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field

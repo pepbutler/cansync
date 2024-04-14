@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from enum import StrEnum
 
-from typing import Final, Any, Callable
+from typing import Final, Any, Callable, Iterable
 from cansync.types import ConfigDict
 
 
@@ -26,24 +26,13 @@ def verify_accessible_path(p: Path) -> bool:
 
     try:
         p.mkdir()
+        return True
     except PermissionError as e:
         logger.warn(e)
         return False
     except Exception as e:
         logger.warn(f"Unknown path resolution error: '{e}'")
         return False
-
-
-class ModuleItemType(StrEnum):
-    # INFO: https://canvas.instructure.com/doc/api/modules.html#ModuleItem
-    HEADER = "SubHeader"
-    PAGE = "Page"
-    QUIZ = "Quiz"
-    EXTERNAL_TOOL = "ExternalTool"
-    EXTERNAL_URL = "ExternalUrl"
-    ATTACHMENT = "File"
-    DISCUSSION = "Discussion"
-    ASSIGNMENT = "Assignment"
 
 
 URL_REGEX: Final[str] = (
@@ -87,7 +76,7 @@ CONFIG_VALIDATORS: Final[dict[str, Callable]] = {
 }
 
 
-TUI_STRINGS: Final[dict[str, list[str]]] = {
+TUI_STRINGS: Final[dict[str, Iterable[str] | str]] = {
     "select_opts": _same_length(
         "Change Canvas URL", "Change API key", "Change storage path", "Select courses"
     ),
