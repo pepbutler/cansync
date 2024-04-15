@@ -1,5 +1,5 @@
 # Cansync
-Sync all important documents from Canvas, with ease.
+Download all documents from canvas without having to sift through the website every time
 
 # Requirements
 - python
@@ -7,25 +7,17 @@ Sync all important documents from Canvas, with ease.
 - pipx (recommended)
 
 ## Installation
-### Using pipx
 ```sh
-git clone https://github.com/pepbutler/cansync
-cd cansync
-pipx install .
+$ git clone https://github.com/pepbutler/cansync
+$ cd cansync
+$ pip[x] install .
 ```
-### Using pip
-```sh
-git clone https://github.com/pepbutler/cansync
-cd cansync
-pip install .
-```
-
 ## Uninstall
-```
-pip(x) uninstall cansync
+```sh
+$ pip[x] uninstall cansync
 ```
 
-# Generating an API Token
+## Generating an API Token
 1. Navigate to top left of the canvas homepage
 2. Click the tab 'Account' and then 'Profile' from the pop-up menu
 3. Scroll the settings page and locate the approved integrations section
