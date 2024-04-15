@@ -34,10 +34,12 @@ class ErrorWindow(Window):
     Show pesky little error window when user submits invalid config information
     """
 
-    def __init__(self, context: WindowManager, *body: str):
+    def __init__(
+        self, context: WindowManager, *body: str, on_done: Callable | None = None
+    ):
         self.context = context
         self.body = body
-        self.return_button = Button("Return", onclick=self.back)
+        self.return_button = Button("Return", onclick=on_done if on_done else self.back)
 
         super().__init__(*self.body, "", self.return_button)
         self.set_title("Warning ⚠")
@@ -140,9 +142,7 @@ class ConfigEditWindow(Window):
 
 class URLInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
-        super().__init__(
-            context, self.on_submit, "Change Canvas URL", "Canvas URL: ", width=60
-        )
+        super().__init__(context, self.on_submit, "Change Canvas URL", "Canvas URL: ")
 
     def on_submit(self, text: str):
         # this might come back to bite ass later
@@ -154,7 +154,7 @@ class URLInputWindow(ConfigEditWindow):
 class APIKeyInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
         super().__init__(
-            context, self.on_submit, "Change API token", "API token: ", width=60
+            context, self.on_submit, "Change API token", "API token: ", width=90
         )
 
     def on_submit(self, text: str):
@@ -164,7 +164,7 @@ class APIKeyInputWindow(ConfigEditWindow):
 class StorageInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
         super().__init__(
-            context, self.on_submit, "Change storage path", "Path('~' ok!): ", width=60
+            context, self.on_submit, "Change storage path", "Path('~' ok!): "
         )
 
     def on_submit(self, text: str):

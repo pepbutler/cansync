@@ -44,12 +44,12 @@ class SyncWindow(Window):
                 f"[bold accent]{action}",
                 "Press Ctrl-C to stop me!",
             ),
-            **TUI_STYLE,
+            width=70,
         )
         self.center()  # this sux
 
     def finish(self) -> None:
-        super().__init__("[bold accent]yugal", self.exit_button)
+        super().__init__("[!rainbow]yugal", self.exit_button)
 
     def sync(self, button: Button) -> None:
 
@@ -103,8 +103,9 @@ class SyncApplication:
             self.main_window = ErrorWindow(
                 self._manager,
                 "You need to configure the settings before downloading stuff, try:",
-                "",
-                Container(f"cansync settings".center(64)),
+                "[@surface-2 !gradient(210)]cansync settings",
+                "in the command line.",
+                on_done=exit,
             )
 
     def run(self, window: Window):
