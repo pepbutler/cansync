@@ -11,10 +11,15 @@ Download all documents from canvas without having to sift through the website ev
 $ git clone https://github.com/pepbutler/cansync
 $ cd cansync
 $ pip[x] install .
+# WARNING: Be sure to add ~/.local/bin to PATH if not using pipx
 ```
 ## Uninstall
 ```sh
 $ pip[x] uninstall cansync
+```
+## How to run it
+```sh
+$ cansync
 ```
 
 ## Generating an API Token

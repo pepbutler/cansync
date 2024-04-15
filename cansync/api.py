@@ -70,6 +70,8 @@ class Canvas:
     def get_courses_info(self) -> Generator[CourseInfo, None, None]:
         courses = self._canvas.get_courses()
         for course in courses:
+            if not getattr(course, "name") or not getattr(course, "id"):  # this is dumb
+                continue
             yield CourseInfo(course.name, course.id)
 
     def get_quiz(self, id: int) -> Generator[Quiz, None, None]:
