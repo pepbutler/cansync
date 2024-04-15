@@ -24,8 +24,8 @@ logger = logging.getLogger(__name__)
 _SELECT_OPTIONS = utils.same_length(
     "Canvas URL",
     "API Token",
-    "Selected Courses",
     "Storage Path",
+    "Selected Courses",
 )
 
 
@@ -141,7 +141,7 @@ class ConfigEditWindow(Window):
 class URLInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
         super().__init__(
-            context, self.on_submit, "Change Canvas URL", "Canvas URL", width=60
+            context, self.on_submit, "Change Canvas URL", "Canvas URL: ", width=60
         )
 
     def on_submit(self, text: str):
@@ -154,7 +154,7 @@ class URLInputWindow(ConfigEditWindow):
 class APIKeyInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
         super().__init__(
-            context, self.on_submit, "Change API token", "API token", width=60
+            context, self.on_submit, "Change API token", "API token: ", width=60
         )
 
     def on_submit(self, text: str):
@@ -164,7 +164,7 @@ class APIKeyInputWindow(ConfigEditWindow):
 class StorageInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
         super().__init__(
-            context, self.on_submit, "Change storage path", "Path('~' ok!)", width=60
+            context, self.on_submit, "Change storage path", "Path('~' ok!): ", width=60
         )
 
     def on_submit(self, text: str):
