@@ -1,6 +1,6 @@
 from __future__ import annotations
 from cansync.api import Canvas, CourseScan, ModuleScan, PageScan, Scanner
-from cansync.const import TUI_STYLE, TUI_STRINGS
+from cansync.const import TUI_STYLE
 from cansync.types import File, Course, Module, ModuleItem, Page
 import cansync.utils as utils
 
@@ -38,14 +38,18 @@ class SyncWindow(Window):
 
     def action(self, course: CourseScan, module: ModuleScan, action: str) -> None:
         super().__init__(
-            Container(TUI_STRINGS["sync"].format(course.name, module.name, action)),
-            self.sync_button,
-            self.exit_button,
+            Container(
+                f"Course: {course.name}",
+                f"Module: {module.name}",
+                f"[bold accent]{action}",
+                "Press Ctrl-C to stop me!",
+            ),
             **TUI_STYLE,
         )
+        self.center()  # this sux
 
     def finish(self) -> None:
-        super().__init__("[bold accent]Done :bangbang:", self.exit_button)
+        super().__init__("[bold accent]yugal", self.exit_button)
 
     def sync(self, button: Button) -> None:
 

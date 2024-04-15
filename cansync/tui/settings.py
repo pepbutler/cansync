@@ -1,4 +1,4 @@
-from cansync.const import TUI_STRINGS, CONFIG_DEFAULTS, TUI_STYLE
+from cansync.const import CONFIG_DEFAULTS, TUI_STYLE
 from cansync.api import Canvas
 from cansync.types import CourseInfo, ConfigKeys
 from cansync.errors import InvalidConfigurationError
@@ -21,6 +21,12 @@ from typing import Callable, Any, Generator, Optional
 
 
 logger = logging.getLogger(__name__)
+_SELECT_OPTIONS = utils.same_length(
+    "Canvas URL",
+    "API Token",
+    "Selected Courses",
+    "Storage Path",
+)
 
 
 class ErrorWindow(Window):
@@ -54,10 +60,7 @@ class SelectWindow(Window):
         self.context = context
 
         buttons_container = Container(
-            *(
-                Button(opt, onclick=on_click, centered=True)
-                for opt in TUI_STRINGS["select_opts"]
-            )
+            *(Button(opt, onclick=on_click, centered=True) for opt in _SELECT_OPTIONS)
         )
         exit_container = Container(Button("Done", onclick=self.exit, centered=True))
 
@@ -81,9 +84,9 @@ class ConfigEditWindow(Window):
     def __init__(
         self,
         context: WindowManager,
+        submit_callback: Callable,
         title: str,
         prompt: str,
-        submit_callback: Callable,
         **settings: str | int | bool,
     ):
         self.input_field = InputField("", prompt=prompt)
@@ -137,7 +140,9 @@ class ConfigEditWindow(Window):
 
 class URLInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
-        super().__init__(context, *TUI_STRINGS["url"], self.on_submit, width=60)
+        super().__init__(
+            context, self.on_submit, "Change Canvas URL", "Canvas URL", width=60
+        )
 
     def on_submit(self, text: str):
         # this might come back to bite ass later
@@ -148,7 +153,9 @@ class URLInputWindow(ConfigEditWindow):
 
 class APIKeyInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
-        super().__init__(context, *TUI_STRINGS["api"], self.on_submit, width=79)
+        super().__init__(
+            context, self.on_submit, "Change API token", "API token", width=60
+        )
 
     def on_submit(self, text: str):
         self._overwrite_value(text, "api_key")
@@ -157,7 +164,7 @@ class APIKeyInputWindow(ConfigEditWindow):
 class StorageInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
         super().__init__(
-            context, *TUI_STRINGS["storage_path"], self.on_submit, width=60
+            context, self.on_submit, "Change storage path", "Path('~' ok!)", width=60
         )
 
     def on_submit(self, text: str):
@@ -173,7 +180,7 @@ class CoursesWindow(Window):
     def __init__(self, context: WindowManager, canvas: Canvas):
         self.context = context
         self.canvas = canvas
-        self.course_id: dict[CourseInfo] = {}
+        self.course_id: dict[str, int] = {}
         self.enabled = Container()
         self.disabled = Container()
         self.submit = Container(Button("Submit", onclick=self.on_submit, centered=True))
@@ -248,7 +255,7 @@ class SettingsApplication:
         """
 
         label = button.label
-        url, api, storage, course = TUI_STRINGS["select_opts"]
+        url, api, storage, course = _SELECT_OPTIONS  # type: ignore[misc]
 
         if label == url:
             self.run(URLInputWindow(self._manager))

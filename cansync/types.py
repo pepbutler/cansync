@@ -4,7 +4,7 @@ from canvasapi.file import File as File
 from canvasapi.page import Page as Page
 from canvasapi.quiz import Quiz as Quiz
 
-from typing import TypedDict, NamedTuple, Literal
+from typing import TypedDict, NamedTuple, Literal, Iterable, TypeVar
 from enum import StrEnum
 
 ConfigKeys = Literal["url", "api_key", "course_ids", "storage_path"]
@@ -32,3 +32,8 @@ class ConfigDict(TypedDict):
 class CourseInfo(NamedTuple):
     name: str
     id: int
+
+
+class TuiStyle(TypedDict):
+    box: str
+    width: int

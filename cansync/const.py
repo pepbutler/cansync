@@ -4,35 +4,12 @@ import logging
 from pathlib import Path
 from enum import StrEnum
 
-from typing import Final, Any, Callable, Iterable
-from cansync.types import ConfigDict
+from typing import Final, Any, Callable
+from cansync.types import ConfigDict, TuiStyle
+from cansync.utils import verify_accessible_path
 
 
 logger = logging.getLogger(__name__)
-
-
-def _same_length(*strings: str) -> list[str]:
-    from cansync.utils import short_name
-
-    return [short_name(s, len(max(strings, key=len))) for s in strings]
-
-
-def verify_accessible_path(p: Path) -> bool:
-    if p.exists():
-        if p.owner() == os.getlogin():
-            return True
-        else:
-            return False
-
-    try:
-        p.mkdir()
-        return True
-    except PermissionError as e:
-        logger.warn(e)
-        return False
-    except Exception as e:
-        logger.warn(f"Unknown path resolution error: '{e}'")
-        return False
 
 
 URL_REGEX: Final[str] = (
@@ -75,22 +52,7 @@ CONFIG_VALIDATORS: Final[dict[str, Callable]] = {
     "course_ids": lambda l: all(isinstance(i, int) for i in l) or l == [],
 }
 
-
-TUI_STRINGS: Final[dict[str, Iterable[str] | str]] = {
-    "select_opts": _same_length(
-        "Change Canvas URL", "Change API key", "Change storage path", "Select courses"
-    ),
-    "url": ("Enter a Canvas URL", "Canvas URL: "),
-    "api": ("Enter an API key", "Key: "),
-    "sync": """
-Course: {}
-Module: {}
-[bold accent]{}
-""",
-    "storage_path": ("Enter a storage path", "Path('~' ok!): "),
-}
-
-TUI_STYLE: Final[dict[str, str | int]] = {
+TUI_STYLE: Final[TuiStyle] = {
     "box": "DOUBLE",
     "width": 50,
 }

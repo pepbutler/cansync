@@ -21,7 +21,5 @@ setuptools.setup(
         "canvasapi>=3.2.0",
         "PyTermGUI>=7.7.0",
     ],
-    # test_suite="tests",
-    # include_package_data=True,
     zip_safe=False,
 )

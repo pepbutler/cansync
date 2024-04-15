@@ -7,12 +7,34 @@ from functools import reduce
 from pathlib import Path
 
 from cansync.errors import InvalidConfigurationError
-from cansync.types import ConfigDict, ConfigKeys, File
+from cansync.types import ConfigDict, ConfigKeys, File, Iterable
 
 from canvasapi.exceptions import ResourceDoesNotExist
 
 
 logger = logging.getLogger(__name__)
+
+
+def verify_accessible_path(p: Path) -> bool:
+    """
+    Test if the user can access a given path to prevent compounding
+    files access errors
+    """
+    if p.exists():
+        if p.owner() == os.getlogin():
+            return True
+        else:
+            return False
+
+    try:
+        p.mkdir()
+        return True
+    except PermissionError as e:
+        logger.warn(e)
+        return False
+    except Exception as e:
+        logger.warn(f"Unknown path resolution error: '{e}'")
+        return False
 
 
 def setup_logging() -> None:
@@ -25,40 +47,36 @@ def setup_logging() -> None:
 
 
 def short_name(name: str, max_length: int) -> str:
-    """
-    Convert a long name to a short version for pretty UI
-
-    :returns: Shorter course title
-    """
+    """Convert a long name to a short version for pretty UI"""
     if len(name) <= max_length:
         return name.ljust(max_length)
     else:
         return name[: max_length - 2] + ".."
 
 
-def better_course_name(name: str) -> str:
+def same_length(*strings: str) -> list[str]:
     """
-    Removes ID numbers next to the given title of the course
+    Extends short_name to apply to all strings in a list with the max
+    length set to that of the largest string
+    """
+    from cansync.utils import short_name
 
-    :returns: Course name
-    """
+    return [short_name(s, len(max(strings, key=lambda s: len(s)))) for s in strings]
+
+
+def better_course_name(name: str) -> str:
+    """Removes ID numbers next to the given title of the course"""
     return re.sub(r" \((\d,? ?)+\)", "", name)
 
 
-def create_dir(directory: str) -> None:
-    """
-    Create a new directory if it does not already exist
-
-    :param directory: Full path of directory to be made
-    """
+def create_dir(directory: Path) -> None:
+    """Create a new directory if it does not already exist"""
     logger.debug("Creating directory {} if not existing".format(directory))
     os.makedirs(directory, exist_ok=True)
 
 
 def create_config() -> None:
-    """
-    Create config file when there is none present
-    """
+    """Create config file when there is none present"""
     from cansync.const import CONFIG_DIR, CONFIG_FN, CONFIG_DEFAULTS
 
     if not CONFIG_FN.exists():
@@ -68,22 +86,14 @@ def create_config() -> None:
 
 
 def complete(config: ConfigDict) -> bool:
-    """
-    Check if all fields are present in the config, if not then it's probably broken
-
-    :returns: If the config given is complete
-    """
+    """Check if all fields are present in the config, if not then it's probably broken"""
     from cansync.const import CONFIG_KEY_DEFINITIONS
 
     return CONFIG_KEY_DEFINITIONS.keys() == config.keys()
 
 
 def valid_key(key: ConfigKeys, value: str | list[int]) -> bool:
-    """
-    Validates config key and value against test conditions
-
-    :returns: If the particular key and value is deemed valid
-    """
+    """Validates config key and value against test conditions"""
     from cansync.const import CONFIG_KEY_DEFINITIONS, CONFIG_VALIDATORS
 
     if key not in CONFIG_KEY_DEFINITIONS.keys():
@@ -97,7 +107,9 @@ def valid(config: ConfigDict) -> bool:
 
     :returns: If the config is deemed valid
     """
-    return all(valid_key(k, v) for k, v in config.items()) and complete(config)
+    k: ConfigKeys
+    v: str | list[int]
+    return all(valid_key(k, v) for k, v in config.items()) and complete(config)  # type: ignore[arg-type]
 
 
 def get_config() -> ConfigDict:
@@ -110,7 +122,7 @@ def get_config() -> ConfigDict:
 
     with open(CONFIG_FN, "r") as fp:
         logger.debug("Retrieving config from file")
-        config = ConfigDict(**toml.load(fp))
+        config = ConfigDict(**toml.load(fp))  # type: ignore[typeddict-item]
 
     return config
 
@@ -151,7 +163,11 @@ def download_structured(file: File, *dirs: str, force=False, tui=False) -> bool:
     :returns: If the file was downloaded
     """
     download_dir = Path(get_config()["storage_path"])
-    path = reduce(lambda p, q: p / q, [download_dir, *dirs])
+    p: Path
+    q: str
+
+    # this is my favourite line of code (that mypy hates :D)
+    path: Path = reduce(lambda p, q: p / q, [download_dir, *dirs])  # type: ignore[operator, assignment]
     file_path = path / file.filename
     create_dir(path)
 
