@@ -5,7 +5,14 @@ from canvasapi.page import Page as Page
 from canvasapi.quiz import Quiz as Quiz
 
 from typing import TypedDict, NamedTuple, Literal, Iterable, TypeVar
-from enum import StrEnum
+
+import sys
+
+if sys.version_info.major <= 3 and sys.version_info.minor < 11:
+    # WHY PYTHON
+    from strenum import StrEnum
+else:
+    from enum import StrEnum
 
 ConfigKeys = Literal["url", "api_key", "course_ids", "storage_path"]
 

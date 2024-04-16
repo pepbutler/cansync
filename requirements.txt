@@ -4,3 +4,4 @@ requests==2.31.0
 toml==0.10.2
 typing_extensions==4.8.0
 PyTermGUI==7.7.0
+StrEnum==0.4.15
