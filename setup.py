@@ -13,7 +13,7 @@ setuptools.setup(
     license="MIT",
     packages=["cansync", "cansync.tui"],
     entry_points={"console_scripts": ["cansync=cansync.main:main"]},
-    python_requires=">=3.10.0",
+    python_requires=">=3.11.0",
     install_requires=[
         "requests>=2.31.0",
         "requests-mock>=1.11.0",

@@ -8,7 +8,7 @@ from typing import TypedDict, NamedTuple, Literal, Iterable, TypeVar
 
 import sys
 
-from strenum import StrEnum
+from enum import StrEnm
 
 ConfigKeys = Literal["url", "api_key", "course_ids", "storage_path"]
 
