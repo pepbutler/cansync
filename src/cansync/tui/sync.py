@@ -4,7 +4,6 @@ import logging
 
 from cansync import utils
 from cansync.api import Canvas, CourseScan, ModuleScan, PageScan
-from cansync.const import TUI_STYLE
 from cansync.types import File
 from pytermgui import (
     Button,
@@ -23,7 +22,8 @@ class SyncWindow(Window):
         self.title = "Sync"
         self.sync_button = Button("Sync all", onclick=self.sync)
         self.exit_button = Button("  Exit  ", onclick=self.exit)
-        super().__init__(self.sync_button, self.exit_button, **TUI_STYLE)
+        super().__init__(self.sync_button, self.exit_button, box="DOUBLE", width=22)
+        self.center()
 
     def action(self, course: CourseScan, module: ModuleScan, action: str) -> None:
         super().__init__(
