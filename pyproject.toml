@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cansync"
+dynamic = ["version"]
+description = "Sync files from Canvas courses"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11.0"
+authors = [
+    { name = "James K.", email = "jameskowal10@gmail.com" },
+]
+dependencies = [
+    "canvasapi>=3.2.0",
+    "PyTermGUI>=7.7.0",
+    "requests-mock>=1.11.0",
+    "requests>=2.31.0",
+    "toml>=0.10.2",
+]
+
+[project.scripts]
+cansync = "cansync.main:main"
+
+[tool.hatch.version]
+path = "src/cansync/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+]
+
+[tool.mypy]
+disallow_untyped_defs = false
+follow_imports = "normal"
+pretty = true
+disable_error_code = "import-untyped"
+show_column_numbers = true
+warn_no_return = false
+warn_unused_ignores = true
+ignore_missing_imports = true
