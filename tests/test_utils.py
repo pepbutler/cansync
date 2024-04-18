@@ -1,13 +1,11 @@
-import pytest
-
-import cansync.utils as utils
-from cansync.const import CONFIG_FN
-from cansync.types import ConfigDict, ConfigKeys
-
 import os
-from typing import Final
 from copy import copy
+from typing import Final
 
+import pytest
+from cansync import utils
+from cansync.const import CONFIG_FN
+from cansync.types import ConfigDict
 
 VALID_CONFIG: Final[ConfigDict] = {
     "url": "https://canvas.bham.ac.uk",
@@ -30,16 +28,16 @@ PARTIAL_INVALID_CONFIG.pop("url")
 
 def test_short_name():
     long = "Very Super Long Course Name (Longer now!!!)"
-    assert "Ver.." == utils.short_name(long, 5)
+    assert utils.short_name(long, 5) == "Ver.."
     assert long == utils.short_name(long, len(long))
 
 
 def test_course_name():
     long = "Brilliant Course (212381, 378182)"
-    assert "Brilliant Course" == utils.better_course_name(long)
+    assert utils.better_course_name(long) == "Brilliant Course"
 
     long = "Brilliant Course (By Bob and John) (918212, )"
-    assert "Brilliant Course (By Bob and John)" == utils.better_course_name(long)
+    assert utils.better_course_name(long) == "Brilliant Course (By Bob and John)"
 
 
 @pytest.fixture

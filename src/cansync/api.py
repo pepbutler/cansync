@@ -1,29 +1,28 @@
 from __future__ import annotations
 
-import cansync.utils as utils
-from cansync.types import (
-    File,
-    Module,
-    ModuleItem,
-    Course,
-    Page,
-    CourseInfo,
-    Quiz,
-    ModuleItemType,
-)
-
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from typing import Callable, Optional, Generator, Any
-
-import re
 import logging
-import canvasapi
+import re
+from abc import ABC, abstractmethod
+from collections.abc import Callable, Generator
+from dataclasses import dataclass
 from functools import cached_property
+from typing import Any
 
+import canvasapi
 from canvasapi.exceptions import InvalidAccessToken, ResourceDoesNotExist
 from requests.exceptions import MissingSchema
 
+from cansync import utils
+from cansync.types import (
+    Course,
+    CourseInfo,
+    File,
+    Module,
+    ModuleItem,
+    ModuleItemType,
+    Page,
+    Quiz,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +69,7 @@ class Canvas:
     def get_courses_info(self) -> Generator[CourseInfo, None, None]:
         courses = self._canvas.get_courses()
         for course in courses:
-            if not getattr(course, "name") or not getattr(course, "id"):  # this is dumb
+            if not course.name or not course.id:  # this is dumb
                 continue
             yield CourseInfo(course.name, course.id)
 
@@ -150,7 +149,7 @@ class ModuleScan(Scanner):
 
     @cached_property
     def items(self) -> list[ModuleItem]:
-        return [item for item in self.module.get_module_items()]
+        return list(self.module.get_module_items())
 
     def items_by_type(self, type: ModuleItemType) -> Generator[ModuleItem, None, None]:
         yield from filter(lambda item: ModuleItemType(item.type) is type, self.items)

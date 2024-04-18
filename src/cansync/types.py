@@ -1,14 +1,12 @@
+from enum import StrEnum
+from typing import Literal, NamedTuple, TypedDict
+
 from canvasapi.course import Course as Course
-from canvasapi.module import Module as Module, ModuleItem as ModuleItem
 from canvasapi.file import File as File
+from canvasapi.module import Module as Module
+from canvasapi.module import ModuleItem as ModuleItem
 from canvasapi.page import Page as Page
 from canvasapi.quiz import Quiz as Quiz
-
-from typing import TypedDict, NamedTuple, Literal, Iterable, TypeVar
-
-import sys
-
-from enum import StrEnum
 
 ConfigKeys = Literal["url", "api_key", "course_ids", "storage_path"]
 

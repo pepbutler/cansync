@@ -1,15 +1,10 @@
-from argparse import ArgumentParser, Namespace
 import logging
-import os
+from argparse import ArgumentParser, Namespace
 
-import cansync.utils as utils
-
-from cansync.const import CONFIG_DIR, CACHE_DIR, LOG_FN
-from cansync.errors import InvalidConfigurationError
-from cansync.api import Canvas
-
-from canvasapi.exceptions import ResourceDoesNotExist, InvalidAccessToken
-
+from cansync import utils
+from cansync.const import CACHE_DIR, CONFIG_DIR
+from cansync.tui.settings import SettingsApplication
+from cansync.tui.sync import SyncApplication
 
 logger = logging.getLogger(__name__)
 
@@ -55,17 +50,11 @@ def parse_args() -> Namespace:
 
 
 def sync(args: Namespace) -> None:
-    from cansync.tui import SyncApplication
-
-    app = SyncApplication()
-    app.start()
+    SyncApplication().start()
 
 
 def settings(args: Namespace) -> None:
-    from cansync.tui import SettingsApplication
-
-    app = SettingsApplication()
-    app.start()
+    SettingsApplication().start()
 
 
 def main() -> None:

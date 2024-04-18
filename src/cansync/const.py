@@ -1,13 +1,12 @@
+import logging
 import os
 import re
-import logging
+from collections.abc import Callable
 from pathlib import Path
-from enum import StrEnum
+from typing import Any, Final
 
-from typing import Final, Any, Callable
 from cansync.types import ConfigDict, TuiStyle
 from cansync.utils import verify_accessible_path
-
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +48,7 @@ CONFIG_VALIDATORS: Final[dict[str, Callable]] = {
     "url": lambda s: re.match(URL_REGEX, s),
     "api_key": lambda s: re.match(API_KEY_REGEX, s),
     "storage_path": lambda s: verify_accessible_path(Path(s)),
-    "course_ids": lambda l: all(isinstance(i, int) for i in l) or l == [],
+    "course_ids": lambda ls: all(isinstance(i, int) for i in ls) or ls == [],
 }
 
 TUI_STYLE: Final[TuiStyle] = {

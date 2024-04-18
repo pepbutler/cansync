@@ -1,16 +1,14 @@
-import requests
 import logging.config
-import toml
 import os
 import re
 from functools import reduce
 from pathlib import Path
 
-from cansync.errors import InvalidConfigurationError
-from cansync.types import ConfigDict, ConfigKeys, File, Iterable
-
+import toml
 from canvasapi.exceptions import ResourceDoesNotExist
 
+from cansync.errors import InvalidConfigurationError
+from cansync.types import ConfigDict, ConfigKeys, File
 
 logger = logging.getLogger(__name__)
 
@@ -21,10 +19,7 @@ def verify_accessible_path(p: Path) -> bool:
     files access errors
     """
     if p.exists():
-        if p.owner() == os.getlogin():
-            return True
-        else:
-            return False
+        return p.owner() == os.getlogin()
 
     try:
         p.mkdir()
@@ -71,13 +66,13 @@ def better_course_name(name: str) -> str:
 
 def create_dir(directory: Path) -> None:
     """Create a new directory if it does not already exist"""
-    logger.debug("Creating directory {} if not existing".format(directory))
+    logger.debug(f"Creating directory {directory} if not existing")
     os.makedirs(directory, exist_ok=True)
 
 
 def create_config() -> None:
     """Create config file when there is none present"""
-    from cansync.const import CONFIG_DIR, CONFIG_FN, CONFIG_DEFAULTS
+    from cansync.const import CONFIG_DEFAULTS, CONFIG_DIR, CONFIG_FN
 
     if not CONFIG_FN.exists():
         logger.debug(f"Creating new config file at {CONFIG_FN}")
@@ -96,8 +91,9 @@ def valid_key(key: ConfigKeys, value: str | list[int]) -> bool:
     """Validates config key and value against test conditions"""
     from cansync.const import CONFIG_KEY_DEFINITIONS, CONFIG_VALIDATORS
 
-    if key not in CONFIG_KEY_DEFINITIONS.keys():
-        raise KeyError(f"Key '{key}' not in config definition")
+    if key not in CONFIG_KEY_DEFINITIONS:
+        e = f"Key '{key}' not in config definition"
+        raise KeyError(e)
     return CONFIG_VALIDATORS[key](value)
 
 
@@ -107,8 +103,6 @@ def valid(config: ConfigDict) -> bool:
 
     :returns: If the config is deemed valid
     """
-    k: ConfigKeys
-    v: str | list[int]
     return all(valid_key(k, v) for k, v in config.items()) and complete(config)  # type: ignore[arg-type]
 
 
@@ -120,7 +114,7 @@ def get_config() -> ConfigDict:
     """
     from cansync.const import CONFIG_FN
 
-    with open(CONFIG_FN, "r") as fp:
+    with open(CONFIG_FN) as fp:
         logger.debug("Retrieving config from file")
         config = ConfigDict(**toml.load(fp))  # type: ignore[typeddict-item]
 
@@ -134,9 +128,8 @@ def set_config(config: ConfigDict) -> None:
     from cansync.const import CONFIG_FN
 
     if not complete(config):
-        raise InvalidConfigurationError(
-            f"Some config keys are missing"
-        )  # this is NOT helpful
+        e = "Some config keys are missing"
+        raise InvalidConfigurationError(e)  # this is NOT helpful
     with open(CONFIG_FN, "w") as fp:
         logger.debug("Writing config")
         toml.dump(config, fp)
@@ -148,8 +141,9 @@ def overwrite_config_value(key: ConfigKeys, value: str | list[int]) -> None:
     """
     from cansync.const import CONFIG_DEFAULTS
 
-    if key not in CONFIG_DEFAULTS.keys():
-        raise InvalidConfigurationError(f"Overwrite with non-existent key '{key}'")
+    if key not in CONFIG_DEFAULTS:
+        e = f"Overwrite with non-existent key '{key}'"
+        raise InvalidConfigurationError(e)
 
     config = get_config()
     config[key] = value
@@ -163,8 +157,6 @@ def download_structured(file: File, *dirs: str, force=False, tui=False) -> bool:
     :returns: If the file was downloaded
     """
     download_dir = Path(get_config()["storage_path"])
-    p: Path
-    q: str
 
     # this is my favourite line of code (that mypy hates :D)
     path: Path = reduce(lambda p, q: p / q, [download_dir, *dirs])  # type: ignore[operator, assignment]

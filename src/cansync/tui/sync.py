@@ -1,28 +1,17 @@
 from __future__ import annotations
-from cansync.api import Canvas, CourseScan, ModuleScan, PageScan, Scanner
+
+import logging
+
+from cansync import utils
+from cansync.api import Canvas, CourseScan, ModuleScan, PageScan
 from cansync.const import TUI_STYLE
-from cansync.types import File, Course, Module, ModuleItem, Page
-import cansync.utils as utils
-
-from canvasapi.exceptions import ResourceDoesNotExist
-
+from cansync.types import File
 from pytermgui import (
+    Button,
+    Container,
     Window,
     WindowManager,
-    Container,
-    Button,
-    InputField,
-    Splitter,
-    Label,
 )
-
-import os
-import logging
-import functools
-
-from abc import ABC, abstractmethod
-from typing import Iterable, Any, Final
-
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +38,7 @@ class SyncWindow(Window):
         self.center()  # this sux
 
     def finish(self) -> None:
-        super().__init__("[!rainbow]yugal", self.exit_button)
+        super().__init__("[!rainbow]Finished with {}", self.exit_button)
 
     def sync(self, button: Button) -> None:
 
@@ -62,7 +51,7 @@ class SyncWindow(Window):
                     self.download(attachment, None, course, module)
 
                 for page in module.get_pages():
-                    self.action(course, module, f"Reading page...")
+                    self.action(course, module, "Reading page...")
 
                     for file in page.get_files():
                         self.action(course, module, "Downloading file...")
@@ -98,7 +87,7 @@ class SyncApplication:
         if self.canvas.connect():
             self.main_window = SyncWindow(self._manager, self.canvas)
         else:
-            from cansync.tui import ErrorWindow
+            from cansync.tui.shared import ErrorWindow
 
             self.main_window = ErrorWindow(
                 self._manager,

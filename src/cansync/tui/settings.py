@@ -1,24 +1,21 @@
-from cansync.const import CONFIG_DEFAULTS, TUI_STYLE
-from cansync.api import Canvas
-from cansync.types import CourseInfo, ConfigKeys
-from cansync.errors import InvalidConfigurationError
-import cansync.utils as utils
-
-from pytermgui import (
-    WindowManager,
-    Window,
-    Button,
-    InputField,
-    Container,
-    Splitter,
-)
-
-import re
-import time
 import logging
+import sys
+from collections.abc import Callable
+from typing import Any
 
-from typing import Callable, Any, Generator, Optional
-
+from cansync import utils
+from cansync.api import Canvas
+from cansync.const import TUI_STYLE
+from cansync.tui.shared import ErrorWindow
+from cansync.types import ConfigKeys
+from pytermgui import (
+    Button,
+    Container,
+    InputField,
+    Splitter,
+    Window,
+    WindowManager,
+)
 
 logger = logging.getLogger(__name__)
 _SELECT_OPTIONS = utils.same_length(
@@ -27,26 +24,6 @@ _SELECT_OPTIONS = utils.same_length(
     "Storage Path",
     "Selected Courses",
 )
-
-
-class ErrorWindow(Window):
-    """
-    Show pesky little error window when user submits invalid config information
-    """
-
-    def __init__(
-        self, context: WindowManager, *body: str, on_done: Callable | None = None
-    ):
-        self.context = context
-        self.body = body
-        self.return_button = Button("Return", onclick=on_done if on_done else self.back)
-
-        super().__init__(*self.body, "", self.return_button)
-        self.set_title("Warning ⚠")
-        self.center()
-
-    def back(self, _: Button) -> None:
-        self.context.remove(self)
 
 
 class SelectWindow(Window):
@@ -75,7 +52,7 @@ class SelectWindow(Window):
 
     def exit(self, _: Button) -> None:
         self.context.stop()
-        exit(0)
+        sys.exit(0)
 
 
 class ConfigEditWindow(Window):
@@ -270,7 +247,8 @@ class SettingsApplication:
                     ErrorWindow(
                         self._manager,
                         "[bold accent]Canvas failed to connect",
-                        "Either the provided url or api key need to be corrected in order to connect.",
+                        "Either the provided url or api key need \
+                            to be corrected in order to connect.",
                     )
                 )
             else:
