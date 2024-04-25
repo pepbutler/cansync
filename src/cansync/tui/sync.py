@@ -20,6 +20,7 @@ class SyncWindow(Window):
         self.context = context
         self.canvas = canvas
         self.title = "Sync"
+        self.download_count = 0
         self.sync_button = Button("Sync all", onclick=self.sync)
         self.exit_button = Button("  Exit  ", onclick=self.exit)
         super().__init__(self.sync_button, self.exit_button, box="DOUBLE", width=22)
@@ -38,7 +39,10 @@ class SyncWindow(Window):
         self.center()  # this sux
 
     def finish(self) -> None:
-        super().__init__("[!rainbow]Finished with {}", self.exit_button)
+        super().__init__(
+            f"[!rainbow]Finished with {self.download_count} new files!",
+            self.exit_button,
+        )
 
     def sync(self, button: Button) -> None:
 
@@ -74,6 +78,8 @@ class SyncWindow(Window):
 
         if not new:
             self.action(course, module, "Skipping file...")
+        else:
+            self.download_count += 1
 
     def exit(self, _: Button) -> None:
         self.context.stop()

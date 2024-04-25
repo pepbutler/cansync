@@ -76,7 +76,7 @@ def create_config() -> None:
 
     if not CONFIG_FN.exists():
         logger.debug(f"Creating new config file at {CONFIG_FN}")
-        os.makedirs(CONFIG_DIR, exist_ok=True)
+        create_dir(CONFIG_DIR)
         set_config(CONFIG_DEFAULTS)
 
 
@@ -163,7 +163,7 @@ def download_structured(file: File, *dirs: str, force=False, tui=False) -> bool:
     file_path = path / file.filename
     create_dir(path)
 
-    if not file_path.exists() or force:
+    if not file_path.is_file() or force:
         logger.info(f"Downloading {file.filename}" + "" if not force else " (forced)")
         try:
             file.download(file_path)
