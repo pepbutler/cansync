@@ -69,7 +69,8 @@ class Canvas:
     def get_courses_info(self) -> Generator[CourseInfo, None, None]:
         courses = self._canvas.get_courses()
         for course in courses:
-            if not course.name or not course.id:  # this is dumb
+            if not hasattr(course, "name"):
+                # this is dumber than that other thing
                 continue
             yield CourseInfo(course.name, course.id)
 
