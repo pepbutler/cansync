@@ -205,7 +205,7 @@ class CoursesWindow(Window):
     def on_submit(self, _: Button) -> None:
         utils.overwrite_config_value(
             "course_ids",
-            [self.course_id[b.label] for b in self.enabled],  # type: ignore[attr-defined]
+            [self.course_id[b.label] for b in self.enabled],
         )
         self.exit()
 
@@ -232,7 +232,7 @@ class SettingsApplication:
         """
 
         label = button.label
-        url, api, storage, course = _SELECT_OPTIONS  # type: ignore[misc]
+        url, api, storage, course = _SELECT_OPTIONS
 
         if label == url:
             self.run(URLInputWindow(self._manager))
