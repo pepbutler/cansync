@@ -3,6 +3,7 @@ from copy import copy
 from typing import Final
 
 import pytest
+
 from cansync import utils
 from cansync.const import CONFIG_FN
 from cansync.types import ConfigDict
@@ -114,4 +115,5 @@ def test_overwrite_config():
     ]
 
 
-def test_download(): ...
+def test_download():
+    ...

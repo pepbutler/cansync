@@ -11,18 +11,15 @@ from cansync.utils import verify_accessible_path
 logger = logging.getLogger(__name__)
 
 
-URL_REGEX: Final[str] = (
-    r"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)"
-)
+URL_REGEX: Final[str] = r"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]\
+    {2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)"
 API_KEY_REGEX: Final[str] = r"\d{4}~[A-Za-z0-9]{64}"
 
 HOME: Final[Path] = Path(
-    os.getenv(
-        "HOME", os.getenv("HOMEDRIVE", os.getenv("HOMESHARE", "this is an issue"))
-    )
+    os.getenv("HOME", os.getenv("HOMEDRIVE", os.getenv("HOMESHARE", "this is an issue")))
 )
-XDG_CACHE_DIR: Final[Path] = Path(os.getenv("XDG_CACHE_HOME", HOME / ".cache"))
-XDG_CONFIG_DIR: Final[Path] = Path(os.getenv("XDG_CONFIG_HOME", HOME / ".config"))
+XDG_CACHE_DIR: Final[Path] = Path(os.getenv("XDG_CACHE_HOME", str(HOME / ".cache")))
+XDG_CONFIG_DIR: Final[Path] = Path(os.getenv("XDG_CONFIG_HOME", str(HOME / ".config")))
 
 CACHE_DIR: Final[Path] = XDG_CACHE_DIR / "cansync"
 LOG_FN: Final[Path] = CACHE_DIR / "cansync.log"

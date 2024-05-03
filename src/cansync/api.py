@@ -89,11 +89,13 @@ class Scanner(ABC):
 
     @property
     @abstractmethod
-    def name(self) -> str: ...
+    def name(self) -> str:
+        ...
 
     @property
     @abstractmethod
-    def id(self) -> int: ...
+    def id(self) -> int:
+        ...
 
 
 @dataclass
@@ -204,9 +206,7 @@ class PageScan(Scanner):
         if self.empty:
             return
 
-        for _, id in re.findall(
-            self.course.resource_regex.format(resource), self.page.body
-        ):
+        for _, id in re.findall(self.course.resource_regex.format(resource), self.page.body):
             logger.info(f"Scanned {resource}({id}) from Page({self.id})")
             if id is not None:
                 yield getter(id)

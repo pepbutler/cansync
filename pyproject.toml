@@ -57,7 +57,6 @@ lint.select = [
   "FBT",
   "I",
   "ICN",
-  "ISC",
   "N",
   "PLC",
   "PLE",
@@ -74,8 +73,9 @@ lint.select = [
   "YTT",
 ]
 lint.ignore = [
-  "A001", "A002", # shadowing built-in functions
-  "PLC0414" # 'as' imports not renaming anything
+  "A001", "A002", "A003", # shadowing built-in functions
+  "PLC0414", # 'as' imports not renaming anything
+  "ISC" # 'hatch fmt' command conflicts
 ]
 lint.unfixable = [
   # Don't touch unused imports
@@ -88,3 +88,4 @@ ban-relative-imports = "all"
 [tool.ruff.lint.per-file-ignores]
 # Tests can use relative imports and assertions
 "tests/**/*" = ["TID252", "S101"]
+

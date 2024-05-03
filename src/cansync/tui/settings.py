@@ -3,11 +3,6 @@ import sys
 from collections.abc import Callable
 from typing import Any
 
-from cansync import utils
-from cansync.api import Canvas
-from cansync.const import TUI_STYLE
-from cansync.tui.shared import ErrorWindow
-from cansync.types import ConfigKeys
 from pytermgui import (
     Button,
     Container,
@@ -16,6 +11,12 @@ from pytermgui import (
     Window,
     WindowManager,
 )
+
+from cansync import utils
+from cansync.api import Canvas
+from cansync.const import TUI_STYLE
+from cansync.tui.shared import ErrorWindow
+from cansync.types import ConfigKeys
 
 logger = logging.getLogger(__name__)
 _SELECT_OPTIONS = utils.same_length(
@@ -130,9 +131,7 @@ class URLInputWindow(ConfigEditWindow):
 
 class APIKeyInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
-        super().__init__(
-            context, self.on_submit, "Change API token", "API token: ", width=90
-        )
+        super().__init__(context, self.on_submit, "Change API token", "API token: ", width=90)
 
     def on_submit(self, text: str):
         self._overwrite_value(text, "api_key")
@@ -140,9 +139,7 @@ class APIKeyInputWindow(ConfigEditWindow):
 
 class StorageInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
-        super().__init__(
-            context, self.on_submit, "Change storage path", "Path('~' ok!): "
-        )
+        super().__init__(context, self.on_submit, "Change storage path", "Path('~' ok!): ")
 
     def on_submit(self, text: str):
         self._overwrite_value(text, "storage_path")

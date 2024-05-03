@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 import logging
+import sys
 
-from cansync import utils
-from cansync.api import Canvas, CourseScan, ModuleScan, PageScan
-from cansync.types import File
 from pytermgui import (
     Button,
     Container,
     Window,
     WindowManager,
 )
+
+from cansync import utils
+from cansync.api import Canvas, CourseScan, ModuleScan, PageScan
+from cansync.types import File
 
 logger = logging.getLogger(__name__)
 
@@ -45,11 +47,8 @@ class SyncWindow(Window):
         )
 
     def sync(self, button: Button) -> None:
-
         for course in self.canvas.get_courses():
-
             for module in course.get_modules():
-
                 for attachment in module.get_attachments():
                     self.action(course, module, "Downloading attachments...")
                     self.download(attachment, None, course, module)
@@ -108,4 +107,7 @@ class SyncApplication:
             manager.add(window)
 
     def start(self):
-        self.run(self.main_window)
+        try:
+            self.run(self.main_window)
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(0)
