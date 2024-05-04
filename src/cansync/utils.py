@@ -22,7 +22,7 @@ def verify_accessible_path(p: Path) -> bool:
         return p.owner() == os.getlogin()
 
     try:
-        p.mkdir()
+        p.mkdir(parents=True)
         return True
     except PermissionError as e:
         logger.warn(e)
@@ -152,7 +152,7 @@ def download_structured(file: File, *dirs: str, force=False, tui=False) -> bool:
 
     :returns: If the file was downloaded
     """
-    download_dir = Path(get_config()["storage_path"])
+    download_dir = Path(get_config()["storage_path"]).expanduser()
 
     # this is my favourite line of code (that mypy hates :D)
     path: Path = reduce(lambda p, q: p / q, [download_dir, *dirs])  # type: ignore[operator, assignment]

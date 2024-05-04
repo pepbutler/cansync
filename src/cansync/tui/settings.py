@@ -124,7 +124,9 @@ class URLInputWindow(ConfigEditWindow):
 
 class APIKeyInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
-        super().__init__(context, self.on_submit, "Change API token", "API token: ", width=90)
+        super().__init__(
+            context, self.on_submit, "Change API token", "API token: ", width=90
+        )
 
     def on_submit(self, text: str):
         self._overwrite_value(text, "api_key")
@@ -132,7 +134,9 @@ class APIKeyInputWindow(ConfigEditWindow):
 
 class StorageInputWindow(ConfigEditWindow):
     def __init__(self, context: WindowManager):
-        super().__init__(context, self.on_submit, "Change storage path", "Path('~' ok!): ")
+        super().__init__(
+            context, self.on_submit, "Change storage path", "Path('~' ok!): "
+        )
 
     def on_submit(self, text: str):
         self._overwrite_value(text, "storage_path")
@@ -165,13 +169,18 @@ class CoursesWindow(Window):
 
         self.center()
 
+        config = utils.get_config()
+
         for name, id in self.canvas.get_courses_info():
             max_length = TUI_STYLE["width"] - 14
             shortened_name = utils.short_name(name, max_length)
 
             self.course_id[shortened_name] = id
             course_button = Button(shortened_name, onclick=self.on_button_click)
-            self.disabled += course_button
+            if id in config["course_ids"]:
+                self.enabled += course_button
+            else:
+                self.disabled += course_button
             self.height += 1
 
     def on_button_click(self, button: Button) -> None:

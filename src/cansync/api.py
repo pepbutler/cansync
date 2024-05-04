@@ -10,7 +10,7 @@ from typing import Any
 
 import canvasapi
 from canvasapi.exceptions import InvalidAccessToken, ResourceDoesNotExist
-from requests.exceptions import MissingSchema
+from requests.exceptions import MissingSchema, ConnectionError
 
 from cansync import utils
 from cansync.types import (
@@ -47,7 +47,12 @@ class Canvas:
             self._canvas = canvasapi.Canvas(config["url"], config["api_key"])
             self._canvas.get_current_user()  # INFO: Test request
             return True
-        except (InvalidAccessToken, MissingSchema, ResourceDoesNotExist) as e:
+        except (
+            InvalidAccessToken,
+            MissingSchema,
+            ResourceDoesNotExist,
+            ConnectionError,
+        ) as e:
             logger.warning(e)
             self._canvas = None
             return False
@@ -204,7 +209,9 @@ class PageScan(Scanner):
         if self.empty:
             return
 
-        for _, id in re.findall(self.course.resource_regex.format(resource), self.page.body):
+        for _, id in re.findall(
+            self.course.resource_regex.format(resource), self.page.body
+        ):
             logger.info(f"Scanned {resource}({id}) from Page({self.id})")
             if id is not None:
                 yield getter(id)
