@@ -89,13 +89,11 @@ class Scanner(ABC):
 
     @property
     @abstractmethod
-    def name(self) -> str:
-        ...
+    def name(self) -> str: ...
 
     @property
     @abstractmethod
-    def id(self) -> int:
-        ...
+    def id(self) -> int: ...
 
 
 @dataclass

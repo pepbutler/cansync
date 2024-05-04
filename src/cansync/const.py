@@ -25,7 +25,7 @@ CACHE_DIR: Final[Path] = XDG_CACHE_DIR / "cansync"
 LOG_FN: Final[Path] = CACHE_DIR / "cansync.log"
 
 CONFIG_DIR: Final[Path] = XDG_CONFIG_DIR / "cansync"
-CONFIG_FN: Final[Path] = CONFIG_DIR / "config.toml"
+CONFIG_PATH: Final[Path] = CONFIG_DIR / "config.toml"
 
 DEFAULT_DOWNLOAD_DIR: Final[Path] = HOME / "Documents" / "Cansync"
 

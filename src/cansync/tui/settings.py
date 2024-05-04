@@ -3,14 +3,7 @@ import sys
 from collections.abc import Callable
 from typing import Any
 
-from pytermgui import (
-    Button,
-    Container,
-    InputField,
-    Splitter,
-    Window,
-    WindowManager,
-)
+from pytermgui import Button, Container, InputField, Splitter, Window, WindowManager
 
 from cansync import utils
 from cansync.api import Canvas

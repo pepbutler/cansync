@@ -33,9 +33,7 @@ def verify_accessible_path(p: Path) -> bool:
 
 
 def setup_logging() -> None:
-    """
-    Setup logging using logging config defined in const.py
-    """
+    """Setup logging using logging config defined in const.py"""
     from cansync.const import LOGGING_CONFIG
 
     logging.config.dictConfig(LOGGING_CONFIG)
@@ -70,18 +68,23 @@ def create_dir(directory: Path) -> None:
     os.makedirs(directory, exist_ok=True)
 
 
-def create_config() -> None:
+def create_config(config_path: Path | None = None) -> None:
     """Create config file when there is none present"""
-    from cansync.const import CONFIG_DEFAULTS, CONFIG_DIR, CONFIG_FN
+    from cansync.const import CONFIG_DEFAULTS, CONFIG_PATH
 
-    if not CONFIG_FN.exists():
-        logger.debug(f"Creating new config file at {CONFIG_FN}")
-        create_dir(CONFIG_DIR)
-        set_config(CONFIG_DEFAULTS)
+    config_path = config_path if config_path else CONFIG_PATH
+
+    if not config_path.exists():
+        logger.debug(f"Creating new config file at {config_path}")
+        create_dir(config_path.parent)
+        set_config(CONFIG_DEFAULTS, config_path)
 
 
 def complete(config: ConfigDict) -> bool:
-    """Check if all fields are present in the config, if not then it's probably broken"""
+    """
+    Check if all fields are present in the config, if not then it's
+    probably broken
+    """
     from cansync.const import CONFIG_KEY_DEFINITIONS
 
     return CONFIG_KEY_DEFINITIONS.keys() == config.keys()
@@ -98,47 +101,40 @@ def valid_key(key: ConfigKeys, value: str | list[int]) -> bool:
 
 
 def valid(config: ConfigDict) -> bool:
-    """
-    Validates config to check all fields are correct and present
-
-    :returns: If the config is deemed valid
-    """
+    """Validates config to check all fields are correct and present"""
     return all(valid_key(k, v) for k, v in config.items()) and complete(config)  # type: ignore[arg-type]
 
 
-def get_config() -> ConfigDict:
+def get_config(path: Path | None = None) -> ConfigDict:
     """
     Get config options from config file
 
     :returns: Config as a key-value dictionary
     """
-    from cansync.const import CONFIG_FN
+    from cansync.const import CONFIG_PATH
 
-    with open(CONFIG_FN) as fp:
+    with open(CONFIG_PATH) as fp:
         logger.debug("Retrieving config from file")
         config = ConfigDict(**toml.load(fp))  # type: ignore[typeddict-item]
 
     return config
 
 
-def set_config(config: ConfigDict) -> None:
-    """
-    Write to local config file
-    """
-    from cansync.const import CONFIG_FN
+def set_config(config: ConfigDict, dest: Path | None = None) -> None:
+    """Write to local config file"""
+    from cansync.const import CONFIG_PATH
 
+    dest = dest if dest else CONFIG_PATH
     if not complete(config):
         e = "Some config keys are missing"
-        raise InvalidConfigurationError(e)  # this is NOT helpful
-    with open(CONFIG_FN, "w") as fp:
+        raise InvalidConfigurationError(e)
+    with open(dest, "w") as fp:
         logger.debug("Writing config")
         toml.dump(config, fp)
 
 
 def overwrite_config_value(key: ConfigKeys, value: str | list[int]) -> None:
-    """
-    Overwrite a specific value in the config file
-    """
+    """Overwrite a specific value in the config file"""
     from cansync.const import CONFIG_DEFAULTS
 
     if key not in CONFIG_DEFAULTS:

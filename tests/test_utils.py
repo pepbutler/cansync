@@ -1,119 +1,67 @@
-import os
-from copy import copy
-from typing import Final
+from pathlib import Path
 
 import pytest
+import toml
 
 from cansync import utils
-from cansync.const import CONFIG_FN
-from cansync.types import ConfigDict
-
-VALID_CONFIG: Final[ConfigDict] = {
-    "url": "https://canvas.bham.ac.uk",
-    "api_key": "1234~aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "course_ids": [123456, 234567, 345678],
-}
-
-INVALID_CONFIG: Final[ConfigDict] = {
-    "url": "bruh",
-    "api_key": "jfdkah8b298j2ifjkdhs92kfldh",
-    "course_ids": ["a"],
-}
-
-PARTIAL_VALID_CONFIG: Final[ConfigDict] = copy(VALID_CONFIG)
-PARTIAL_VALID_CONFIG.pop("api_key")
-
-PARTIAL_INVALID_CONFIG: Final[ConfigDict] = copy(INVALID_CONFIG)
-PARTIAL_INVALID_CONFIG.pop("url")
 
 
-def test_short_name():
-    long = "Very Super Long Course Name (Longer now!!!)"
-    assert utils.short_name(long, 5) == "Ver.."
-    assert long == utils.short_name(long, len(long))
+class TestUtils:
+    def test_short_name(self):
+        long = "Very Super Long Course Name (Longer now!!!)"
+        assert utils.short_name(long, 5) == "Ver.."
+        assert long == utils.short_name(long, len(long))
 
+    def test_course_name(self):
+        long = "Brilliant Course (212381, 378182)"
+        assert utils.better_course_name(long) == "Brilliant Course"
 
-def test_course_name():
-    long = "Brilliant Course (212381, 378182)"
-    assert utils.better_course_name(long) == "Brilliant Course"
+        long = "Brilliant Course (By Bob and John) (918212, )"
+        assert utils.better_course_name(long) == "Brilliant Course (By Bob and John)"
 
-    long = "Brilliant Course (By Bob and John) (918212, )"
-    assert utils.better_course_name(long) == "Brilliant Course (By Bob and John)"
+    def test_create_dir(self, tmp_path):
+        path = Path(tmp_path) / "test2" / "test3"
+        utils.create_dir(path)
+        assert path.exists() and path.is_dir()
 
+    def test_create_config(self, tmp_config_path, config):
+        assert tmp_config_path.is_file()
 
-@pytest.fixture
-def normal_dir() -> str:
-    dirname = "test_created_dir"
-    utils.create_dir(dirname)
-    yield dirname
-    os.removedirs(dirname)
-
-
-@pytest.fixture
-def nested_dir() -> str:
-    dirname = os.path.join("test_created_dir", "test2", "test3")
-    penultimate = os.path.join("test_created_dir", "test2")
-    utils.create_dir(dirname)
-    yield dirname
-
-    # dont remove base dir as this would screw up the other teardown above
-    os.rmdir(dirname)
-    os.rmdir(penultimate)
-
-
-def test_create_dir(normal_dir, nested_dir):
-    assert os.path.exists(normal_dir) and os.path.isdir(normal_dir)
-    assert os.path.exists(nested_dir) and os.path.isdir(nested_dir)
-
-
-@pytest.fixture
-def config() -> bool:
-    utils.create_config()
-    yield True
-    os.remove(CONFIG_FN)
-
-
-def test_create_config(config):
-    assert os.path.exists(CONFIG_FN) and os.path.isfile(CONFIG_FN)
-
-
-def test_complete():
-    assert utils.complete(VALID_CONFIG) and utils.complete(INVALID_CONFIG)
-
-
-def test_valid():
-    assert utils.valid(VALID_CONFIG)
-    assert not utils.valid(INVALID_CONFIG)
-    assert not utils.valid(PARTIAL_VALID_CONFIG)
-
-
-def test_valid_key():
-    for k, v in VALID_CONFIG.items():
-        assert utils.valid_key(k, v)
-
-
-def test_set_config(config):
-    utils.set_config(VALID_CONFIG)
-    assert utils.get_config() == VALID_CONFIG
-
-
-def test_get_config(config):
-    utils.set_config(VALID_CONFIG)
-    assert utils.get_config() == VALID_CONFIG
-
-
-def test_overwrite_config():
-    utils.set_config(VALID_CONFIG)
-    utils.overwrite_config_value(
-        "course_ids",
+    @pytest.mark.parametrize(
+        "config_fn,test_type",
         [
-            999999,
+            ["config_1.toml", "complete"],
+            ["config_2.toml", "incomplete"],
+            ["config_3.toml", "invalid"],
         ],
     )
-    assert utils.get_config()["course_ids"] == [
-        999999,
-    ]
+    def test_config_properties(self, test_data_path: Path, config_fn: str, test_type: str):
+        with open(test_data_path / config_fn) as fp:
+            this_config = toml.load(fp)
 
+        expected = not test_type.startswith("in")
+        if test_type.endswith("complete"):
+            assert utils.complete(this_config) == expected
+        elif test_type.endswith("valid"):
+            assert utils.valid(this_config) == expected
 
-def test_download():
-    ...
+    def test_get_config(self, tmp_config_path, tmp_path, config):
+        assert utils.get_config() == config
+
+    def test_set_config(self, config):
+        config["url"] = "https://test2.com"
+        utils.set_config(config)
+        assert utils.get_config(config) == config
+
+    def test_overwrite_config(self, config):
+        utils.overwrite_config_value(
+            "course_ids",
+            [
+                69420,
+            ],
+        )
+        assert utils.get_config()["course_ids"] == [
+            69420,
+        ]
+
+    def test_download(self): ...

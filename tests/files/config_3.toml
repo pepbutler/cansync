@@ -1,0 +1,4 @@
+url = "123"
+api_key = "bruh"
+storage_path = "~/Documents/Canvas"
+course_ids = [123456, 789123]

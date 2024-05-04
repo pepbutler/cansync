@@ -3,12 +3,7 @@ from __future__ import annotations
 import logging
 import sys
 
-from pytermgui import (
-    Button,
-    Container,
-    Window,
-    WindowManager,
-)
+from pytermgui import Button, Container, Window, WindowManager
 
 from cansync import utils
 from cansync.api import Canvas, CourseScan, ModuleScan, PageScan

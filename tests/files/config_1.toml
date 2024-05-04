@@ -1,0 +1,4 @@
+url = "https://canvas.edu.ac.uk"
+api_key = "1234~aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+storage_path = "~/Documents/Canvas"
+course_ids = [123456, 789123]
