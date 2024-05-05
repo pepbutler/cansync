@@ -245,9 +245,10 @@ class SettingsApplication:
                 self.run(
                     ErrorWindow(
                         self._manager,
-                        "[bold accent]Canvas failed to connect",
-                        "Either the provided url or api key need \
-                            to be corrected in order to connect.",
+                        "[@surface-2 bold accent]Canvas failed to connect",
+                        "Either the provided URL or API token",
+                        "need to be corrected in order to",
+                        "connect.",
                     )
                 )
             else:

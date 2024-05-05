@@ -10,7 +10,7 @@ from typing import Any
 
 import canvasapi
 from canvasapi.exceptions import InvalidAccessToken, ResourceDoesNotExist
-from requests.exceptions import MissingSchema, ConnectionError
+from requests.exceptions import ConnectionError, MissingSchema
 
 from cansync import utils
 from cansync.types import (
