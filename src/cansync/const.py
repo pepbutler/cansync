@@ -48,7 +48,7 @@ CONFIG_KEY_DEFINITIONS: Final[dict[str, str]] = {
 CONFIG_VALIDATORS: Final[dict[str, Callable]] = {
     "url": lambda s: re.match(URL_REGEX, s),
     "api_key": lambda s: re.match(API_KEY_REGEX, s),
-    "storage_path": lambda s: verify_accessible_path(Path(s)),
+    "storage_path": lambda s: verify_accessible_path(Path(s).expanduser()),
     "course_ids": lambda ls: all(isinstance(i, int) for i in ls) or ls == [],
 }
 
