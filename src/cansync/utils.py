@@ -39,6 +39,10 @@ def setup_logging() -> None:
     logging.config.dictConfig(LOGGING_CONFIG)
 
 
+def path_format(name: str) -> str:
+    return name.replace(" ", "-")
+
+
 def short_name(name: str, max_length: int) -> str:
     """Convert a long name to a short version for pretty UI"""
     if len(name) <= max_length:

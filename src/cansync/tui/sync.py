@@ -65,11 +65,10 @@ class SyncWindow(Window):
         module: ModuleScan,
     ) -> None:
         logger.info(f"Downloading {file.filename}")
-        if page is not None:
-            new = utils.download_structured(file, course.name, module.name, page.name)
-        else:
-            new = utils.download_structured(file, course.name, module.name)
+        names = (course.name, module.name, page.name if page is not None else None)
+        names = (utils.path_format(name) for name in names if names is not None)
 
+        new = utils.download_structured(file, *names)
         if not new:
             self.action(course, module, "Skipping file...")
         else:
