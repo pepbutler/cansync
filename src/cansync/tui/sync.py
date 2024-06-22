@@ -3,11 +3,10 @@ from __future__ import annotations
 import logging
 import sys
 
-from pytermgui import Button, Container, Window, WindowManager
-
 from cansync import utils
 from cansync.api import Canvas, CourseScan, ModuleScan, PageScan
 from cansync.types import File
+from pytermgui import Button, Container, Window, WindowManager
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +65,7 @@ class SyncWindow(Window):
     ) -> None:
         logger.info(f"Downloading {file.filename}")
         names = (course.name, module.name, page.name if page is not None else None)
-        names = (utils.path_format(name) for name in names if names is not None)
+        names = (utils.path_format(name) for name in names if name is not None)
 
         new = utils.download_structured(file, *names)
         if not new:
