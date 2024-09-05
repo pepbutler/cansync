@@ -1,0 +1,213 @@
+
+% Jan 2016: small dataset used for educational purposes by marina santini at uppsala university = 100 pos and 100 neg tweets
+% the original dataset in arff format can be grabbed from: https://docs.google.com/open?id=0B1pvkpCwTsiSd1pyTFZkdWVRdEs5Q1NiQW1mRmF1Zw
+% reference(1): http://www.aclweb.org/anthology/W10-0513 (The Edinburgh Twitter Corpus, 2010)
+% reference(2): http://www.cs.waikato.ac.nz/~ml/publications/2010/Twitter-crc.pdf (Sentiment Knowledge Discovery in Twitter Streaming Data , 2011)
+
+
+@relation tweets
+
+@attribute tweet_body string
+@attribute sentiment {pos,neg}
+
+@data
+'anyone feel motivated the fri afternoon prior to a holiday? wanted to get lots done... but i want jammies and judge judy... \"SIR!\" &lt;3 her ',pos
+'seriously, do you have to rub it in maggie!!!!  ',pos
+'if i\'m not wrong.. Alt is when image can\'t be displayed.. Tooltip is the \'title\' ',pos
+'I don\'t like social karma  much. Would rather skip it, but can\'t afford to piss my friend off any more ',pos
+'I\'d be happy to review the Iomega if EMC send me one!!! ',pos
+'Something  I have wanted to make for a while now... finally done   URL',pos
+'you\'re so sweet!  proving me right again...  the Dutch are the Best!   ',pos
+'Look for us on the back of your Pepsi can! Our Pepsi can offer hit\nstores today! Can\'t wait to see one ',pos
+'well rob i have to admit that you have to admit that you feel cool for being on twitter and listening to me ',pos
+'big skype call at 1010! msg me if you want in ',pos
+'well don\'t let it happen again ',pos
+'thanks for following me and welcome to my world! ',pos
+'season 3... all of it.. al is looking for season 4... i can\'t believe he didn\'t prepare... ',pos
+'Yikes, it\'s windy here today; up to 50 mph NOAA says. Good thing electrician taught me generator drill yesterday; feeling, uh, empowered. ',pos
+'URL - Well, my fave bar DID give me a blue moon to-go. ',pos
+'Makes at least two of us.  ',pos
+'that \'slang\' doesn\'t really work for you ',pos
+'yes i did THANK YOU! ',pos
+'- Rugby is my dog   Although I much prefer union to league....',pos
+'it\'s a pleasure using my blackberry bold in a free wifi environment, bypassing 3g and vodafone\'s tariffs entirely - also, very quick!  ',pos
+'i\'ll give you a dollar and a pot brownie if you do it for me ',pos
+'Here\'s to the Birthday Boy who saved our lives...Happy Christmas Eve!!! Love you \nxoxo&lt;3',pos
+'n78 very nice',pos
+'I appreciate your concern and advice. ',pos
+'it just seemed a bit viscious that\'s all, &ur right, its not about how many followers. As long as they\'re happy ',pos
+'my previous link is NSFW -  coz it can get every coworker of urs ROFL -ing at ur desk )',pos
+'Headline re-writing contestprize=link&credit in post) How to find in-person help with your business - Better ideas?',neg
+'yep, been there plenty of times. I prefer St. Pete Beach by the Don Cesar. No comment on the girls thing... I\'m married. ',pos
+'RAN OUT OF TIME&gt;&gt;&gt;&gt;&gt;  Brandon talked too long. guess you\'ll have to watch next weekend! ',pos
+'OMG Twilight... My list of obsessions grows bigger by degrees ',pos
+'I\'m trying to reteach myself French, isn\'t it a beautiful language?! ',pos
+'that\'s a very red avatar you have there ',pos
+'My Twitemperature is a warm 77F (25C)! URL    its getting better  ',pos
+'hi Nikki! How are you spending the day before Xmas? ',pos
+'Please Digg VentureBeat\'s article about gamerDNA\'s Discovery Engine!   URL   (Thanks!  )',pos
+'do you have a friend named radiohead? ',pos
+'I\'m in Chicago, finding good food in general can be hit or miss ',pos
+'lol  ...it may be Google\'s Behaviour targeting :P',pos
+'Have a great trip!  Safe travels and happy holidays ',pos
+'need a smile?   this is perhaps the most PRECIOUS video ever: URL',pos
+'Been excited about SXSW since passes went on sale ',pos
+'thx for a such warm \"Thanx\". )',pos
+'Welcome Mama! one more month to go and then all smiles!!! Please share your pearls of wisdom ',pos
+'Thank you! BTW, your shop name always makes me smile',pos
+'I am trying to get through this day but the crazy people are extra crazy \n-Britt',pos
+'new life  owen is z\'n naam, life is beautiful... zelfs na moeilijke periodes glijk laatste maanden',pos
+'Thank you! Happy New year to you, too ',pos
+'Wow, 6-weeks huh? Amazing ',pos
+'Thank you!!! ',pos
+'ok, uploading files to server for asst. producers to grab. Get to work! well... maybe tomorrow? (I mean later today?) ',pos
+'Tune into me right now on 106.1 WBLI-FM or log onto wbli.com   xoxoxo The Beautiful Stranger',pos
+'Oh how i missed johnny\'s ',pos
+'Question: What\'s the best automatic ping site? Looking for your thoughts ',pos
+'conor oberst, you never fail to cheer me up ',pos
+'Going to sleep, happy and content after my Pushing Daisies weekly dose. ',pos
+'Yaaaaay Dad. Man everyone\'s going to want him. He did sound impressed with the other job...who knows. His choices are endless heh ',pos
+'i call dibs on holding gideon USER 715',pos
+'No but I did see The Lady from Shanghai..,  gotta love Orson Welles and Rita Hayworth!',pos
+'great job Merry Christmas',pos
+'Received my copy of CineFx today.  I almost look forward to it more than my PB mags.  ',pos
+'Just walked by 2 people and 1 said...\"yup, I was sitting on a solar cell.\" I love conversations out of context : )',pos
+'glad that I could help with that ',pos
+'He gets lots of treats, believe me! Every time he goes outside & comes in I give him a treat. Every time I eat he gets a treat. ',pos
+'When in August. I have travel plans that month as well, but mine are flexible. Let me know.  YAY! :D Of course I\'m serious!',pos
+'Hm telefoontje van Agis.. Of mijn polisblad was aangekomen en of het duidelijk genoeg was... Dat verwacht je dan weer niet ',pos
+'Oh, I need to find mine. I had to scrap my window with my Costco Card yesterday LOL',pos
+'mas to tam ',pos
+'USER - that\'s a matter of opinion Mark ',pos
+'Stuff should just work!!! Where\'s the nearest can of Red Bull, I need a caffeine rush if I\'m going to sort this jobby out! ',pos
+'Clearly you hate me ',pos
+'good morning to you and good night to me ',pos
+'You could never be boring Jacs...even with plain coffee. ',pos
+'spent the night dl\'ing bridal checklists. the organizer in me is lovin\' this ',pos
+'kanye west is starting to look like son-of-cameo. YES! i finally got my yearly cameo reference in and just under the wire, i might add ',pos
+'uploading video to youtube, shudnt be long ',pos
+'I\'m a leaner  haven\'t been on my borad for months...',pos
+'ok, thats me done. kidlets need lullabies and snuggles and cuddles. i need some docos and knitting time',pos
+'I thought Seattle is very multi cultural but I have never seen it full of white . If it is a bad joke, blame it on my doubleshot espresso',pos
+'Thanks for the pointers to folks in Oz. I\'ll be making contact later this week. ',pos
+'ooh, but the manti branch is too far and full of hacks ',pos
+'i woke up at 2230, and plan on spending my entire night working on our SIP stack in C++ - i think that beats your sad ',pos
+'Can not freaking sleep! sheesh! the little inspiration I needed, found out that people do listen to what I have to say.  www.FACETGIRL.com',pos
+'you\'re right. i agree. ',pos
+'- good luck Ollie ',pos
+'lol won\'t help them if they get eaten ',pos
+'Glad Ohm is back in Big D',pos
+'I will take care of it.  no worries.',pos
+'LOL, iphones don\'t understand british people  URL',pos
+'Loved hanging with Steph and Tiff tonight!! Great start to the week! ',pos
+'Herpes Simplex 1 is mostly contagious in the week before and after an outbreak.  Comfy with the condom odds?  Keep kissing! ',pos
+'happy merry to you too gentile giant. ',pos
+'And free show washington square park afternoon monday ',pos
+'Not his fault...  he\'s tried before.  ',pos
+'Dropping off cards, doing some last minute wrapping....looking forward to chilling on Christmas day!! lol ',pos
+'Yeaaa I can\'t stop smiling :D It was only like 5 mins, cuz he had to get ready for his show..but it\'s okay ',pos
+'Just going for lunch ',pos
+'RETWEET Check out #ActionsTalk #22 featuring Cd Vann of #Sohobiztube.com! Pls retweet Milwaukee/Chicago  URL',pos
+'logo design week.  seems even mlug is doing the same.',pos
+'Thanks for that very much appreciated : )',pos
+'Min mamma äe född i Kiruna, och mormor, och morsmorsmor.   ',pos
+'I had the same issue with dominions site. Fixed it by using internet explorer ',neg
+'Screw that, apparently we\'re off to the carvery for lunch/dinner. Guess it\'ll be the wimps kicking a ball ',neg
+'my neighbors r complaining  about my home theater ...so nights i have to switch off the subwoofer ',neg
+'Last day online for the coming fortnight \nexams beginning in 10days time..cya on 1st guys bye',neg
+'Awww, sweetie  I can send you a copy? Y\'know I don\'t dig Jordan, but even he is ADORABLE on RR. YOU should totally see it!',neg
+'Headline re-writing contestprize=link&credit in post) How to find in-person help with your business - Better ideas?',neg
+'I\'m so so sorry to hear that. My condolences to your gf ',neg
+'I think I lost my puffy coat. My life is as good as over ',neg
+'yeah it\'s kinda cold. i\'ll get through it ',neg
+'Rebecca hasn\'t tweeted since Oct. 1st!! Disappointment city!! ',neg
+'Menchies   URL',neg
+'Hmmm I don\'t know what to say other than \"AHHHHHH!\" I think my GPU is gone. Apple store says they can fix for $300 ',neg
+'Hee! Similar situation. A few years ago we went to Houston, and I kept saying \"nee-kon\" and people were looking at me funny ',neg
+'Sad but true...Pushing Daisies will continue after the final episode in graphic novel form. Oh well.... ',neg
+'4 me WordPress updates are a love/hate relationship. I love the updates. My less than tech savvy bloggers typically have to be retrained ',neg
+'I would be more worried about myself if the last erotica book I read wasn\'t just BAD.  It had negative hotness.  ',neg
+'Time for bed... Dnw finals ',neg
+'I need to go to gym but i\'m sooooo lazy!!!!!!!!!!!!! ',neg
+'? ??????? craftsponge ???????????? ?????? ? ????-?????? ',neg
+'I am stuck at home like a prisoner waiting for my cam. Still no signs of it ',neg
+'woke up with a coffee headache ',neg
+' If it\'s any consolation, I told stalker-boy that he can\'t come to the gathering.',neg
+'RIP lawand hajo.....a great syrian artist dies in such a dramatic way...no comment ',neg
+'LOL y\'all are beggars. So I take the junk off, make a mess...then what??? I Don\'t even get to be in it! ',neg
+'Lily\'s had me up since 7. Husband blissfully sleeping away, working on 9 hours now. Me = &gt;5  doesn\'t bode well for errand running 2day.',neg
+'I\'m home - but won\'t be online for too long since it\'s a lot later than planned ... and work tomorrow of course ',neg
+'But since I don\'t really know AppleScript, other than clumsy cut-and-pasting sometimes, that fails both \"EZ\" and \"quick\" for me ',neg
+'the only negative thing is that it slows your connection slightly. but seeing free premium TV makes it worth it! ',pos
+'forgot my leftovers for lunch  they\'re really tastey too ',neg
+'He didnt hit me up  I wouldve at least asked for a lap dance before I blocked him..',neg
+'URL - Sometimes I wish I was tall enough to model. I\'m a shorty. ',neg
+'Feeling weird... and a little sick. Might need to have an extra-long sleep...  Can\'t get sick again!!!!',neg
+'So THAT\'s your real backup plan. I was so looking forward to the circus monkey gig',neg
+'been at the hospital all morning its a bad day 4me ',neg
+'A nice post on end of year web checklist.  I\'m pretty sure my non-profit would fail this list.      URL',neg
+'craving sushi but the places are closed due to all the snow  I guess I\'ll have to have my red beans n\' rice I cooked instead.',neg
+'My chest still feels full of ick  when will it enddddd?',neg
+'Has anyone by chance ever rented a mac? Any good connections? A way to get one here by tomorrow? I\'m in Joplin, Missouri no Apple store ',neg
+'Just got thru handling the busted pipe situation  Whoever built house didn\'t insulate pipes on outside wall.. Lots of drywall work tomorrw',neg
+'my best friend\'s 12 yr old Golden Retriever died this morning   & her Hubs is outta town. We went over to help... very sad...',neg
+'Because of my stomach being fucked up. I can\'t do SHIT. I have been eating nothing but chicken soup and crackers for weeks',neg
+'awe! girl, there are no christmas specials on at all, i must have missed them and xmas hasnt been that great all for me! ',neg
+'Nothing disappoints like a disappointing taco. They burned the chorizo! ',neg
+'noooo. don\'t quit the KAT-TUN fandom please ',neg
+'now live in Kent though ',neg
+'woah, my twitterfeed is working now. sorry, I\'ve been busy in my shops.! yikes, I should slow it down a bit.  But i have limite time. ',neg
+'USER According to Ysabella, there\'s a \"class action lawsuit with a bunch of music folks against youtube\". That\'s why. ',neg
+'I am having a very Mondayish Monday! ',neg
+'Jealous! Wish I could have gone to the Morton\'s party you invited me to awhile back ',neg
+'Overslept, just managed to get into work on time but I couldn\'t use the internets in the morning like I usually do ',neg
+'yeah  n believe me life is dry bcoz of it. doesnt help when i get \"you sooo shoulda been at this n that the other night!!\" lol',neg
+'will have to skip the first montreal.rb  but you should go and write a blog post about it for me, plz!',neg
+'So much for those lovely 70+ degree days. That cold front finally hit our area - high today only supposed to be 40. ',neg
+'I\'m freaking thinking about what your power outage would be doing to my tropical fish who like it a balmy 83 degrees..  ',neg
+'Southern Illinois sucks. Or at least tiny towns do. No online ordering for Pizza Hut!!  I miss big city DeKalb!!',neg
+'I ordered the drupal book.  Backordered till jan on amazon ',neg
+'I think the same awaits me when I finally get back 2 philly .... Still stuck in Chicago ',neg
+'is still feeling blue, a day later ',neg
+'someone bring me to ny tomorrow. my pussy ass is too scared to drive in the snow ',neg
+'so my harddrive is dead ',neg
+'Shit on tv, wide awake, nothing interesting enough to hold my attention ',neg
+'She\'s got time and I don\'t ',neg
+'Bedtime. Night all. One final done, four to go. ',neg
+'havent quiet figured this out yet.... ',neg
+'Looong day.. 1 Beagle & a singing terrier out of the pound. Jeff\'s suffering with the busted rib But has the dogs to cheer him up',neg
+'Just got back from dinner at Cuvee with my wife and sister.I love that place but seemed like the staff didn\'t want to be there. ',neg
+'Aw man. I feel like crap. Sipping my theraflu so I can knock out. I\'m so not looking forward to work tomoro. ',neg
+'No... just heard abt it... still my product uses xml ',neg
+'halah, ketinggalan lagi .. ',neg
+'Twine must have that stomach bug today.  ',neg
+'hmmmmmmmm, sonds really interesting!!!  But, etsy won\'t let you sell your etsy items on other websites ',neg
+'OH NO!!! gutted USER NZ election results!!! cannot believe how national won!!! devastated that our beloved HELEN CLARK is standing down  OMG!',neg
+'Unsuccessfully coordinating a Google Local Business Listing phone verification process. Resorting to postcard via snail mail ',neg
+'',neg
+'Doesn\'t look like it, unfortunately. I was considering it, but I had a late day appt. and that kind of put it out. Wish I lived closer. ',neg
+'I\'m sorry Robyn....I wish I could say it got easier.   Us momma\'s could fix the problem I bet!',neg
+'I just read that on your profile. I\'m applying for a job tomorrow though. Haven\'t been able to pay my rent for Dec. ',neg
+'is the poor man  coughing up the heat. Grrrr!',neg
+'Oh how I miss my psp.... ',neg
+'me same here...surviving continue  capek!!',neg
+'Home alone on Christmas ',neg
+'Some guy just continuously coughed (no cover) over my clean folded laundry! WTF! &gt; man..  Life is kind of comedic sometimes.  :P',neg
+'Jst had dinner...will sleep in a while..I wanted to complete so mch work this weekend bt did very little..got to put in extrahrs trrow!!',neg
+'I\'m sick again...man, what a weak body. I\'m coughing up crude and my chest hurts.  ',neg
+'Still working on fixing my blog; realizing posts have been butchered in the process; some of my best content is gone.  ',neg
+'Mornin everyone!!!! Scholl will b awful cuz the most descent guys were suspended for a while!!!  School is AWFUL, TERRIBLE, UNFAIR!!! ETC.',neg
+'i need to cut back my drinking ',neg
+'that sucks *hugs* ',neg
+'Tommy the manager who has toured with Scott Weiland and hooked ius up w/drinks last time is nowhere to be found ',neg
+'No sleep last night. Worried for Nana. She looked so fragile and frightened last night. ',neg
+'Sad.  Another icon gone.  ',neg
+'i donut understand what is going on with twat tonight and i don\'t wanna go to bed even if i am exhausted. ',neg
+'mumbai airport without wi-fi... thats so boring .. ',neg
+'V-PAP delivered. No time to try it out for a nap . Going out for dinner w/ some drivers tonight.',neg
+'Wrking on The Woodlands Market Reports = Months Supply & Appreciation+Days On Market. Looking good now, will trend weaker in nxt few rpts',neg
+'i wish u were here  ',neg
+'Jan Brewer as Governor - a mine in every backyard and an evangelical on every corner ',neg
+'lazy saturday. about to take new product photos with new ottlit, research new storage units, clean, figure out how to  make $2000 fast ',neg
+'If anyone\'s interested, hard rock has a big party tonight.Turn up in white,pay 1000 and you can have unlimited food and drinks!I cant go ',neg
+'Sirens are gone. No Cloverfield.  Probably just a crime.',neg
